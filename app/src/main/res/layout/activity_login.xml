@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/title"
+        android:text="login"></TextView>
+    <EditText
+        app:layout_constraintTop_toBottomOf="@id/title"
+        android:id="@+id/userid"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"/>
+    <EditText
+        app:layout_constraintTop_toBottomOf="@id/userid"
+        android:id="@+id/userpassward"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"/>
+    <Button
+        app:layout_constraintTop_toBottomOf="@id/userpassward"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/login"
+        android:text="login"></Button>
+    <Button
+        app:layout_constraintTop_toBottomOf="@id/userpassward"
+        app:layout_constraintLeft_toRightOf="@id/login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/signup"
+        android:text="signup"></Button>
+</androidx.constraintlayout.widget.ConstraintLayout>

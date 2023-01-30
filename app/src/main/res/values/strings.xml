@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="server_adress">http://13.231.147.7:8000</string>
+</resources>
