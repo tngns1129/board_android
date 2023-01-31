@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.semo.myapplication
 
 class User(
     var id:String,

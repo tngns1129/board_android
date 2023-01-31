@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.semo.myapplication
 
 data class TitleViewData(
     var title: String?,

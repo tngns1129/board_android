@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.semo.myapplication
 
 data class BoardData(
     var id: Int,
@@ -12,13 +12,5 @@ data class BoardData(
     var large_content:String?,
     ){
 }
-data class CheckAuthorData(
-    var code: String?,
-    var msg: String?,
-){
-}
 
-data class ContentViewData(
-    var content: String?,
-){
-}
+

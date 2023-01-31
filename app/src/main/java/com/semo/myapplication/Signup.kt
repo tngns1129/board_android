@@ -1,24 +1,20 @@
-package com.example.myapplication
+package com.semo.myapplication
 
 import android.os.Build
 import android.os.Bundle
+import android.os.PatternMatcher
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import com.example.myapplication.databinding.ActivitySignupBinding
+import com.semo.myapplication.databinding.ActivitySignupBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
-import java.util.TimeZone
-import kotlin.random.Random
+import java.util.regex.Pattern
 
 class Signup : AppCompatActivity() {
 
@@ -47,30 +43,58 @@ class Signup : AppCompatActivity() {
         var pw: String?
 
         binding.cancel.setOnClickListener(){
+
+            id = binding.userid.text.toString()
+            pw = binding.userpassward.text.toString()
+
+
             finish()
         }
 
         binding.signup.setOnClickListener(){
+            binding.idRule.visibility = View.GONE
+            binding.pwRule.visibility = View.GONE
             id = binding.userid.text.toString()
             pw = binding.userpassward.text.toString()
             Log.d("SIGNUP","id : "+id)
             Log.d("SIGNUP","pw : "+pw)
-            signupService.requestSignup(id!!, pw!!).enqueue(object: Callback<SignupData> {
-                override fun onFailure(call: Call<SignupData>, t: Throwable) {
-                    t.message?.let { it1 -> Log.e("SIGNUP", it1) }
-                    signup?.let { it1 -> toast(it1.msg) }
-                }
-                override fun onResponse(call: Call<SignupData>, response: Response<SignupData>) {
-                    signup = response.body()
-                    Log.d("SIGNUP","msg : "+signup?.msg)
-                    Log.d("SIGNUP","code : "+signup?.code)
-                    signup?.let { it1 -> toast(it1.msg) }
-                    if(signup?.code.equals("000")){
-                        finish()
-                    }
-                }
-            })
 
+            val idPattern = "^[A-Za-z0-9]{1,15}+$"
+            val pwPattern = "^[A-Za-z0-9]{1,15}+$"
+
+            var pattern = Pattern.compile(idPattern)
+            val idMatcher = pattern.matcher(id)
+            pattern = Pattern.compile(pwPattern)
+            val pwMatcher = pattern.matcher(pw)
+
+            if(idMatcher.matches() && pwMatcher.matches()) {
+                signupService.requestSignup(id!!, pw!!).enqueue(object : Callback<SignupData> {
+                    override fun onFailure(call: Call<SignupData>, t: Throwable) {
+                        t.message?.let { it1 -> Log.e("SIGNUP", it1) }
+                        signup?.let { it1 -> toast(it1.msg) }
+                    }
+
+                    override fun onResponse(
+                        call: Call<SignupData>,
+                        response: Response<SignupData>
+                    ) {
+                        signup = response.body()
+                        Log.d("SIGNUP", "msg : " + signup?.msg)
+                        Log.d("SIGNUP", "code : " + signup?.code)
+                        signup?.let { it1 -> toast(it1.msg) }
+                        if (signup?.code.equals("000")) {
+                            finish()
+                        }
+                    }
+                })
+            } else if(!idMatcher.matches() && pwMatcher.matches()){
+                binding.idRule.visibility = View.VISIBLE
+            } else if(idMatcher.matches() && !pwMatcher.matches()){
+                binding.pwRule.visibility = View.VISIBLE
+            } else if(!idMatcher.matches() && !pwMatcher.matches()){
+                binding.idRule.visibility = View.VISIBLE
+                binding.pwRule.visibility = View.VISIBLE
+            }
         }
 
     }

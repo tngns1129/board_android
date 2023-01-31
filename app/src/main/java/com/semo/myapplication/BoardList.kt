@@ -1,11 +1,11 @@
-package com.example.myapplication
+package com.semo.myapplication
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.myapplication.databinding.ActivityPostListBinding
+import com.semo.myapplication.databinding.ActivityPostListBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

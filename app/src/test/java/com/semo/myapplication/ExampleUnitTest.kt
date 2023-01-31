@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.semo.myapplication
 
 import org.junit.Test
 

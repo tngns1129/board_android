@@ -1,14 +1,13 @@
-package com.example.myapplication
+package com.semo.myapplication
 
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.example.myapplication.databinding.ActivityPostListBinding
+import com.semo.myapplication.databinding.ActivityPostListBinding
 
 class BoardListAdapter(
     val contents: ArrayList<TitleViewData>,

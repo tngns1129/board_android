@@ -13,21 +13,38 @@
         app:layout_constraintTop_toBottomOf="@id/title"
         android:id="@+id/userid"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"/>
+        android:layout_width="match_parent"
+        android:hint=" ID"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/id_rule"
+        app:layout_constraintTop_toBottomOf="@+id/userid"
+        android:text="@string/id_rule"
+        android:visibility="gone"></TextView>
     <EditText
-        app:layout_constraintTop_toBottomOf="@id/userid"
+        app:layout_constraintTop_toBottomOf="@id/id_rule"
         android:id="@+id/userpassward"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"/>
+        android:layout_width="match_parent"
+        android:hint=" Password"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/pw_rule"
+        android:text="@string/pw_rule"
+        app:layout_constraintTop_toBottomOf="@+id/userpassward"
+        android:visibility="gone"></TextView>
     <Button
-        app:layout_constraintTop_toBottomOf="@id/userpassward"
+        app:layout_constraintTop_toBottomOf="@id/pw_rule"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/signup"
         android:text="signup"></Button>
     <Button
-        app:layout_constraintTop_toBottomOf="@id/userpassward"
+        app:layout_constraintTop_toBottomOf="@id/pw_rule"
         app:layout_constraintLeft_toRightOf="@id/signup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
