@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">My Application</string>
-    <string name="server_adress">http://13.231.147.7:8000</string>
-    <string name="id_rule">Please enter no more than 15 numbers or letters without spaces.</string>
-    <string name="pw_rule">Please enter no more than 15 numbers or letters without spaces.</string>
-</resources>
+    <string name="app_name">Board</string>
+<string name="server_adress">http://13.231.147.7:8000</string>
+    <!--        <string name="server_adress">https://172.30.1.45:8000</string>-->
+        <string name="id_rule">Please enter no more than 15 numbers or letters without spaces.</string>
+        <string name="pw_rule">Please enter no more than 15 numbers or letters without spaces.</string>
+    </resources>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">게시판</string>
     <string name="server_adress">http://13.231.147.7:8000</string>
     <string name="id_rule">15자리 이하 문자나 숫자만 공백없이 입력하세요</string>
     <string name="pw_rule">15자리 이하 문자나 숫자만 공백없이 입력하세요</string>
