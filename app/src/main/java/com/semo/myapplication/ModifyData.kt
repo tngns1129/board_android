@@ -1,5 +1,5 @@
 package com.semo.myapplication
 
-data class DeleteData(
+data class ModifyData(
     val code: String,){
 }

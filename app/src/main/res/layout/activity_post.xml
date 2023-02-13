@@ -1,84 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    <TextView
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".Board">
+    <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        android:id="@+id/title"
-        android:text="title"></TextView>
-    <EditText
+        android:background="@drawable/post_list">
+        <ImageButton
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:background="@drawable/transparent_button"
+            android:src="@drawable/back"
+            android:id="@+id/back">
+        </ImageButton>
+        <Button
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:text="Semo"
+            android:textAllCaps="false"
+            android:textSize="23dp"
+            android:background="@drawable/transparent_button">
+        </Button>
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:layout_marginRight="5dp"
+            android:src="@drawable/modify"
+            android:id="@+id/modify"
+            android:background="@drawable/transparent_button"
+            android:layout_gravity="right"
+            android:padding="10dp">
+        </ImageButton>
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:layout_marginRight="3dp"
+            android:src="@drawable/delete"
+            android:id="@+id/delete"
+            android:background="@drawable/transparent_button"
+            android:layout_gravity="right"
+            android:padding="10dp">
+        </ImageButton>
+    </androidx.appcompat.widget.Toolbar>
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        android:id="@+id/modify_title"
-        android:text="title"
-        android:visibility="invisible"></EditText>
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
+        android:weightSum="1">
 
-    <TextView
-        android:id="@+id/content"
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="title"
+            android:textColor="@color/black"
+            android:textSize="30dp"></TextView>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"></View>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginRight="10dp">
+        <TextView
+            android:id="@+id/author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="author"
+            android:textSize="15dp"
+            ></TextView>
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2023-02-12"
+                android:textSize="15dp"
+                ></TextView>
+        </LinearLayout>
+    </LinearLayout>
+
+
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="content"
-        app:layout_constraintBottom_toTopOf="@id/author"
-        app:layout_constraintTop_toBottomOf="@+id/title"
-        ></TextView>
-    <EditText
-        android:id="@+id/modify_content"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="content"
-        app:layout_constraintBottom_toTopOf="@id/author"
-        app:layout_constraintTop_toBottomOf="@+id/title"
-        android:visibility="invisible"
-        ></EditText>
-
-    <TextView
-        android:id="@+id/author"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="author"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/content"
-        ></TextView>
-
-    <Button
-        app:layout_constraintTop_toBottomOf="@id/author"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/modify"
-        android:text="수정"></Button>
-    <Button
-        app:layout_constraintTop_toBottomOf="@id/author"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/modify_confirm"
-        android:text="확인"
-        android:visibility="invisible"></Button>
-    <Button
-        app:layout_constraintTop_toBottomOf="@id/author"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/modify"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/delete"
-        android:text="삭제"></Button>
-    <Button
-        app:layout_constraintTop_toBottomOf="@id/author"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/modify"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/modify_cancel"
-        android:text="취소"
-        android:visibility="invisible"></Button>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:scrollbars="vertical"
+        android:fillViewport="true"
+        >
+        <TextView
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="25dp"
+            android:text="content"
+            android:textColor="#C41C1B1B"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="10dp"
+            android:padding="5dp"
+            ></TextView>
+    </ScrollView>
+</LinearLayout>

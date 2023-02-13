@@ -1,6 +1,7 @@
 package com.semo.myapplication
 
 data class ContentViewData(
-    var content: String?,
+    var code:String,
+    var content:ContentData,
 ){
 }

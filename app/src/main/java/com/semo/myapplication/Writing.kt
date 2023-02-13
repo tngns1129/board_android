@@ -26,7 +26,7 @@ class Writing : AppCompatActivity () {
         setContentView(binding.root)
 
         val intent = intent
-        val user = intent.getSerializableExtra("user") as User
+        val user = intent.getSerializableExtra("user") as UserData
 
         var retrofit = Retrofit.Builder()
             .baseUrl(resources.getString(R.string.server_adress))
@@ -35,25 +35,24 @@ class Writing : AppCompatActivity () {
         var writingService: WritingService = retrofit.create(WritingService::class.java)
 
         var title: String? = null
-        var contents: String? = null
+        var content: String? = null
         var author: String? = null
 
         binding.confirm.setOnClickListener {
             title = binding.title.text.toString()
-            contents = binding.contents.text.toString()
+            content = binding.contents.text.toString()
             author = user.id
             Log.d("POST", "title :"+title)
-            Log.d("POST", "contents :"+contents)
+            Log.d("POST", "content :"+content)
             Log.d("POST", "uid :"+author)
-            writingService.requestPost(title,contents,author).enqueue(object: Callback<WritingData> {
+            writingService.requestPost(title,content,author).enqueue(object: Callback<WritingData> {
                 override fun onFailure(call: Call<WritingData>, t: Throwable) {
                 }
                 override fun onResponse(call: Call<WritingData>, response: Response<WritingData>) {
                     writing = response.body()
-                    Log.d("POST","msg : "+writing?.msg)
                     Log.d("POST","code : "+writing?.code)
-                    writing?.let { it1 -> toast(it1.msg) }
                     if(writing?.code.equals("000")){
+                        toast("글작성 성공")
                         finish()
                     }
                 }
@@ -61,7 +60,11 @@ class Writing : AppCompatActivity () {
         }
 
         binding.cancel.setOnClickListener {
+            finish()
+        }
 
+        binding.back.setOnClickListener{
+            finish()
         }
 
     }

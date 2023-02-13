@@ -79,7 +79,6 @@ class Signup : AppCompatActivity() {
                         response: Response<SignupData>
                     ) {
                         signup = response.body()
-                        Log.d("SIGNUP", "msg : " + signup?.msg)
                         Log.d("SIGNUP", "code : " + signup?.code)
                         signup?.let { it1 -> toast(it1.msg) }
                         if (signup?.code.equals("000")) {

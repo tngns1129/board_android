@@ -1,10 +1,15 @@
 package com.semo.myapplication
 
+import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
+import android.text.method.ScrollingMovementMethod
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.snackbar.Snackbar
 import com.semo.myapplication.databinding.ActivityPostBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -26,8 +31,9 @@ class Board : AppCompatActivity() {
     var title: String? = null
     var content: String? = null
     var user_id:String? = null
+    var modyfiyDate:String? = null
 
-    var modyfiyData:ModyfiyData? = null
+    var modyfiyData:ModifyData? = null
     var contentData:ContentViewData? = null
     var checkAuthorData:CheckAuthorData? = null
 
@@ -44,19 +50,24 @@ class Board : AppCompatActivity() {
         // getRoot 메서드로 레이아웃 내부의 최상위 위치 뷰의
         // 인스턴스를 활용하여 생성된 뷰를 액티비티에 표시 합니다.
         setContentView(binding.root)
+        binding.content.movementMethod = ScrollingMovementMethod.getInstance()
 
-        binding.title.setText(intent.getStringExtra("title"))
+        title = intent.getStringExtra("title")
+
+        binding.title.setText(title)
         boardService.contentview(intent.getIntExtra("post_id",-1)).enqueue(object: Callback<ContentViewData> {
             override fun onFailure(call: Call<ContentViewData>, t: Throwable) {
             }
             override fun onResponse(call: Call<ContentViewData>, response: Response<ContentViewData>) {
                 contentData = response.body()
-                binding.content.setText(contentData!!.content.toString())
-                content = contentData!!.content.toString()
+                binding.content.setText(contentData!!.content.content)
+                content = contentData!!.content.content
             }
         })
         author = intent.getStringExtra("author")
+        modyfiyDate = intent.getStringExtra("updated_date")
         binding.author.setText(author)
+        binding.date.setText(modyfiyDate)
         post_id = intent.getIntExtra("post_id",0)
         user_id = intent.getStringExtra("user_id")
 
@@ -68,82 +79,75 @@ class Board : AppCompatActivity() {
                 }
                 override fun onResponse(call: Call<DeleteData>, response: Response<DeleteData>) {
                     deleteData = response.body()
-                    deleteData?.let { it1 -> toast(it1.msg) }
-                    if(deleteData?.code.equals("000"))
+                    if(deleteData?.code.equals("000")) {
+                        toast("삭제성공")
                         finish()
+                    } else if(deleteData?.code.equals("001")) {
+                        toast("작가 불일치")
+                    }
                 }
             })
         }
         binding.modify.setOnClickListener {
-            boardService.checkauthor(post_id!!,user_id,).enqueue(object : Callback<CheckAuthorData>{
-                override fun onResponse(call: Call<CheckAuthorData>, response: Response<CheckAuthorData>) {
-                    checkAuthorData = response.body()
-                    if(checkAuthorData?.code.equals("000")){
-                        binding.title.visibility = View.INVISIBLE
-                        binding.content.visibility = View.INVISIBLE
-                        binding.delete.visibility = View.INVISIBLE
-                        binding.modify.visibility = View.INVISIBLE
-                        binding.modifyTitle.visibility = View.VISIBLE
-                        binding.modifyContent.visibility = View.VISIBLE
-                        binding.modifyConfirm.visibility = View.VISIBLE
-                        binding.modifyCancel.visibility = View.VISIBLE
-                        binding.modifyTitle.setText(binding.title.text)
-                        binding.modifyContent.setText(binding.content.text)
-                    }
-                    else if(checkAuthorData?.code.equals("001")){
-                        checkAuthorData?.msg?.let { it1 -> toast(it1) }
-                    }
-                }
-
-                override fun onFailure(call: Call<CheckAuthorData>, t: Throwable) {
-
-
-                }
-
-            })
+            val modifyIntent = Intent(this, Modify::class.java)
+            modifyIntent.putExtra("title", title)
+            modifyIntent.putExtra("content", content)
+            modifyIntent.putExtra("post_id", post_id)
+            modifyIntent.putExtra("user_id", user_id)
+            startActivity(modifyIntent)
 
         }
-        binding.modifyCancel.setOnClickListener {
-            binding.title.visibility = View.VISIBLE
-            binding.content.visibility = View.VISIBLE
-            binding.delete.visibility = View.VISIBLE
-            binding.modify.visibility = View.VISIBLE
-            binding.modifyTitle.visibility = View.INVISIBLE
-            binding.modifyContent.visibility = View.INVISIBLE
-            binding.modifyConfirm.visibility = View.INVISIBLE
-            binding.modifyCancel.visibility = View.INVISIBLE
-        }
-        binding.modifyConfirm.setOnClickListener {
-            title = binding.modifyTitle.text.toString()
-            content = binding.modifyContent.text.toString()
-            boardService.modify(post_id!!,user_id, title, content).enqueue(object : Callback<ModyfiyData>{
-                override fun onResponse(call: Call<ModyfiyData>, response: Response<ModyfiyData>) {
-                    modyfiyData = response.body()
-                    if(modyfiyData?.code.equals("000")){
-                        binding.title.visibility = View.VISIBLE
-                        binding.content.visibility = View.VISIBLE
-                        binding.delete.visibility = View.VISIBLE
-                        binding.modify.visibility = View.VISIBLE
-                        binding.modifyTitle.visibility = View.INVISIBLE
-                        binding.modifyContent.visibility = View.INVISIBLE
-                        binding.modifyConfirm.visibility = View.INVISIBLE
-                        binding.modifyCancel.visibility = View.INVISIBLE
-                        binding.title.setText(title)
-                        binding.content.setText(content)
-                    }
-                    else if(modyfiyData?.code.equals("001")){
-                        modyfiyData?.let { it1 -> toast(it1.msg) }
-                    }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        var retrofit = Retrofit.Builder()
+            .baseUrl(resources.getString(R.string.server_adress))
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+        var boardService: BoardService = retrofit.create(BoardService::class.java)
+        boardService.checkauthor(post_id!!,user_id,).enqueue(object : Callback<CheckAuthorData>{
+            override fun onResponse(call: Call<CheckAuthorData>, response: Response<CheckAuthorData>) {
+                checkAuthorData = response.body()
+                if(checkAuthorData?.code.equals("000")){
+                    binding.modify.visibility = View.VISIBLE
+                    binding.delete.visibility = View.VISIBLE
                 }
-
-                override fun onFailure(call: Call<ModyfiyData>, t: Throwable) {
-
-
+                else if(checkAuthorData?.code.equals("001")){
+                    binding.modify.visibility = View.GONE
+                    binding.delete.visibility = View.GONE
+                } else{
+                    binding.modify.visibility = View.GONE
+                    binding.delete.visibility = View.GONE
                 }
+            }
 
-            })
+            override fun onFailure(call: Call<CheckAuthorData>, t: Throwable) {
+
+
+            }
+
+        })
+        boardService.contentview(intent.getIntExtra("post_id",-1)).enqueue(object: Callback<ContentViewData> {
+            override fun onFailure(call: Call<ContentViewData>, t: Throwable) {
+            }
+            override fun onResponse(call: Call<ContentViewData>, response: Response<ContentViewData>) {
+                contentData = response.body()
+                binding.content.setText(contentData!!.content.content)
+                content = contentData!!.content.content
+            }
+        })
+        binding.content.setText(content)
+        binding.title.setText(title)
+        binding.date.setText(modyfiyDate)
+
+        binding.back.setOnClickListener {
+            finish()
         }
     }
+
+
     fun toast(message:String){
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }

@@ -1,7 +1,22 @@
 <resources>
     <string name="app_name">Board</string>
-<string name="server_adress">http://13.231.147.7:8000</string>
-    <!--        <string name="server_adress">https://172.30.1.45:8000</string>-->
-        <string name="id_rule">Please enter no more than 15 numbers or letters without spaces.</string>
-        <string name="pw_rule">Please enter no more than 15 numbers or letters without spaces.</string>
-    </resources>
+
+<!--<string name="server_adress">http://13.231.147.7:8000</string>-->
+    <string name="server_adress">http://172.30.1.45:8000</string>
+<!--    <string name="server_adress">http://10.0.2.2:8000</string>-->
+    <string name="auto_login_id"></string>
+    <string name="auto_login_password"></string>
+    <string name="id_rule">Please enter no more than 15 numbers or letters without spaces.</string>
+    <string name="pw_rule">Please enter no more than 15 numbers or letters without spaces.</string>
+    <string name="signin">Sign In</string>
+    <string name="signup">Sign Up</string>
+    <string name="signout">Sign Out</string>
+    <string name="find_id">Find ID</string>
+    <string name="find_pw">Find PW</string>
+    <string name="confirm">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="enter_title">Please enter your title</string>
+    <string name="enter_content">Please enter your content</string>
+    <string name="exit_info">Are you sure you want to quit?</string>
+    <string name="logout_info">Are you sure you want to sign out?</string>
+</resources>

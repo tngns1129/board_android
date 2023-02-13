@@ -1,7 +1,7 @@
 package com.semo.myapplication
 
-class User(
+data class UserData (
     var id:String,
     var username:String,
-    ):java.io.Serializable {
-}
+):java.io.Serializable
+{}

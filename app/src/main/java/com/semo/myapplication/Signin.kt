@@ -1,6 +1,7 @@
 package com.semo.myapplication
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -16,6 +17,9 @@ import java.util.regex.Pattern
 
 class Signin : AppCompatActivity() {
 
+    private lateinit var sharedPreferences : SharedPreferences
+    private lateinit var editor : SharedPreferences.Editor
+
     // 전역 변수로 바인딩 객체 선언
     private var mBinding: ActivitySigninBinding? = null
     // 매번 null 체크를 할 필요 없이 편의성을 위해 바인딩 변수 재 선언
@@ -27,11 +31,58 @@ class Signin : AppCompatActivity() {
         mBinding = ActivitySigninBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        sharedPreferences = getSharedPreferences("loginInfo", MODE_PRIVATE)
+        editor = sharedPreferences.edit()
+
+//        binding.userid.setText(sharedPreferences.getString("id",""))
+//        binding.userpassward.setText(sharedPreferences.getString("pw",""))
+
         var retrofit = Retrofit.Builder()
             .baseUrl(resources.getString(R.string.server_adress))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         var signinService: SigninService = retrofit.create(SigninService::class.java)
+        val mainIntent = Intent(this, BoardList::class.java)
+
+        var id = sharedPreferences.getString("id","")
+        var pw = sharedPreferences.getString("pw","")
+
+        if (id != null) {
+            if (pw != null) {
+                signinService.requestSignin(id, pw).enqueue(object : Callback<SigninData> {
+                    override fun onFailure(call: Call<SigninData>, t: Throwable) {
+                        t.message?.let { it1 -> Log.e("LOGIN", it1) }
+                        toast("서버 연결 실패")
+                    }
+
+                    override fun onResponse(
+                        call: Call<SigninData>,
+                        response: Response<SigninData>
+                    ) {
+                        signin = response.body()
+                        Log.d("SIGNINnn", "response : \n" + signin)
+                        when (signin?.code) {
+                            "000" -> { //성공
+                                toast("로그인 성공")
+                                val user = UserData(signin!!.user.id, id)
+                                mainIntent.putExtra("user", user)
+                                startActivity(mainIntent)
+                                finish()
+                            }
+                            "001" -> { //id 불일치
+                                toast("계정을 확인하세요")
+                                mBinding!!.userid.setText("")
+                                mBinding!!.userpassward.setText("")
+                            }
+                            "002" -> { //pw 불일치
+                                toast("패스워드가 일치하지 않습니다")
+                                mBinding!!.userpassward.setText("")
+                            }
+                        }
+                    }
+                })
+            }
+        }
 
         binding.signup.setOnClickListener(){
             val signupIntent = Intent(this, Signup::class.java)
@@ -66,22 +117,25 @@ class Signin : AppCompatActivity() {
                         response: Response<SigninData>
                     ) {
                         signin = response.body()
-                        Log.d("SIGNIN", "msg : " + signin?.msg)
-                        Log.d("SIGNIN", "code : " + signin?.code)
-                        Log.d("SIGNIN", "uid : " + signin?.uid)
-                        signin?.let { it1 -> toast(it1.msg) }
+                        Log.d("SIGNINnn", "response : \n" + signin)
                         when (signin?.code) {
                             "000" -> { //성공
-                                val user = User(signin!!.uid, id)
+                                toast("로그인 성공")
+                                editor.putString("id", mBinding!!.userid.text.toString())
+                                editor.putString("pw", mBinding!!.userpassward.text.toString())
+                                editor.commit()
+                                val user = UserData(signin!!.user.id, id)
                                 mainIntent.putExtra("user", user)
                                 startActivity(mainIntent)
                                 finish()
                             }
                             "001" -> { //id 불일치
+                                toast("계정을 확인하세요")
                                 mBinding!!.userid.setText("")
                                 mBinding!!.userpassward.setText("")
                             }
                             "002" -> { //pw 불일치
+                                toast("패스워드가 일치하지 않습니다")
                                 mBinding!!.userpassward.setText("")
                             }
                         }
@@ -98,6 +152,11 @@ class Signin : AppCompatActivity() {
         }
 
     }
+
+    override fun onResume() {
+        super.onResume()
+    }
+
     fun toast(message:String){
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }

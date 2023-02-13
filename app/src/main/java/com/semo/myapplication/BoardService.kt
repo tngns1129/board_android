@@ -33,7 +33,7 @@ interface BoardService {
         @Field("user_id") userid: String?,
         @Field("title") title: String?,
         @Field("content") contents: String?,
-    ) : Call<ModyfiyData>
+    ) : Call<ModifyData>
 
     @FormUrlEncoded
     @POST("/checkauthorview/")

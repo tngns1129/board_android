@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context=".Writing">
+    tools:context=".Modify">
 
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
@@ -29,7 +29,6 @@
             android:textSize="23dp"
             android:background="@drawable/transparent_button">
         </Button>
-
     </androidx.appcompat.widget.Toolbar>
 
     <LinearLayout
@@ -44,7 +43,7 @@
             android:layout_weight="0.999"
             android:weightSum="1">
             <EditText
-                android:id="@+id/title"
+                android:id="@+id/modify_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toTopOf="@+id/contents"
@@ -52,7 +51,7 @@
                 android:layout_weight="0.05"
                 android:hint="@string/enter_title"></EditText>
             <EditText
-                android:id="@+id/contents"
+                android:id="@+id/modify_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toTopOf="@+id/confirm"
@@ -66,20 +65,20 @@
             android:layout_height="wrap_content"
             android:weightSum="1"
             android:orientation="horizontal">
-                <Button
-                    app:layout_constraintTop_toBottomOf="@+id/contents"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/confirm"
-                    android:text="ok"
-                    android:layout_weight="0.5"
-                    android:background="@drawable/confirm_button"
-                    android:layout_gravity="left"
-                    android:textColor="@color/white"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginLeft="10dp">
-                </Button>
+            <Button
+                app:layout_constraintTop_toBottomOf="@+id/contents"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/confirm"
+                android:text="ok"
+                android:layout_weight="0.5"
+                android:background="@drawable/confirm_button"
+                android:layout_gravity="left"
+                android:textColor="@color/white"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp">
+            </Button>
             <Button
                 app:layout_constraintTop_toBottomOf="@+id/contents"
                 app:layout_constraintLeft_toRightOf="@+id/confirm"
