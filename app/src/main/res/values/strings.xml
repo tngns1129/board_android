@@ -1,9 +1,7 @@
 <resources>
     <string name="app_name">Board</string>
 
-<!--<string name="server_adress">http://13.231.147.7:8000</string>-->
-    <string name="server_adress">http://172.30.1.45:8000</string>
-<!--    <string name="server_adress">http://10.0.2.2:8000</string>-->
+<string name="server_adress">http://13.231.147.7:8000</string>
     <string name="auto_login_id"></string>
     <string name="auto_login_password"></string>
     <string name="id_rule">Please enter no more than 15 numbers or letters without spaces.</string>

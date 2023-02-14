@@ -44,6 +44,10 @@ class Signin : AppCompatActivity() {
         var signinService: SigninService = retrofit.create(SigninService::class.java)
         val mainIntent = Intent(this, BoardList::class.java)
 
+        binding.loginView.visibility = View.GONE
+        binding.semo.visibility = View.VISIBLE
+        binding.loading.visibility = View.VISIBLE
+
         var id = sharedPreferences.getString("id","")
         var pw = sharedPreferences.getString("pw","")
 
@@ -53,6 +57,9 @@ class Signin : AppCompatActivity() {
                     override fun onFailure(call: Call<SigninData>, t: Throwable) {
                         t.message?.let { it1 -> Log.e("LOGIN", it1) }
                         toast("서버 연결 실패")
+                        binding.loginView.visibility = View.VISIBLE
+                        binding.semo.visibility = View.GONE
+                        binding.loading.visibility = View.GONE
                     }
 
                     override fun onResponse(
@@ -63,20 +70,31 @@ class Signin : AppCompatActivity() {
                         Log.d("SIGNINnn", "response : \n" + signin)
                         when (signin?.code) {
                             "000" -> { //성공
-                                toast("로그인 성공")
+                                toast("자동 로그인 성공")
                                 val user = UserData(signin!!.user.id, id)
                                 mainIntent.putExtra("user", user)
                                 startActivity(mainIntent)
                                 finish()
                             }
                             "001" -> { //id 불일치
-                                toast("계정을 확인하세요")
+                                toast("자동 로그인 실패\n계정을 확인하세요")
                                 mBinding!!.userid.setText("")
                                 mBinding!!.userpassward.setText("")
+                                binding.loginView.visibility = View.VISIBLE
+                                binding.semo.visibility = View.GONE
+                                binding.loading.visibility = View.GONE
                             }
                             "002" -> { //pw 불일치
-                                toast("패스워드가 일치하지 않습니다")
+                                toast("자동 로그인 실패\n패스워드가 일치하지 않습니다")
                                 mBinding!!.userpassward.setText("")
+                                binding.loginView.visibility = View.VISIBLE
+                                binding.semo.visibility = View.GONE
+                                binding.loading.visibility = View.GONE
+                            }
+                            else -> {
+                                binding.loginView.visibility = View.VISIBLE
+                                binding.semo.visibility = View.GONE
+                                binding.loading.visibility = View.GONE
                             }
                         }
                     }

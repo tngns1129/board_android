@@ -1,6 +1,7 @@
 package com.semo.myapplication
 
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,15 +36,14 @@ class BoardListAdapter(
         var d:String
         var t:String
 
-        if(contents[position].updated_date.toString().substring(5 until 6).equals("0"))
-            d = contents[position].updated_date.toString().substring(6 until 7)
+        if(contents[position].updated_date.toString().substring(5 until 6).equals("0")) // 월 10의자리
+            d = contents[position].updated_date.toString().substring(6 until 7)     //월 1자리 입력
         else
-            d = contents[position].updated_date.toString().substring(5 until 7)
+            d = contents[position].updated_date.toString().substring(5 until 7)     //월 2자리 입력
 
-        if(contents[position].updated_date.toString().substring(10 until 11).equals("T"))
-            d = d +"/"+contents[position].updated_date.toString().substring(9 until 10)
-        else
-            d = d +"/"+contents[position].updated_date.toString().substring(9 until 11)
+        d = d + "/" + contents[position].updated_date.toString().substring(8 until 10)
+
+        Log.d("date", contents[position].updated_date.toString())
 
         t = contents[position].updated_date.toString().substring(11 until 16)
         holder.date.text = d+ " "+t
