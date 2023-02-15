@@ -65,7 +65,8 @@
                 <TextView android:id="@+id/rules"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="@string/signup_info"></TextView>
+                    android:text="@string/signup_info"
+                    android:textSize="14dp"></TextView>
 
             </LinearLayout>
         </LinearLayout>
