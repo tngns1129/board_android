@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">Board</string>
 
-<string name="server_adress">http://13.231.147.7:8000</string>
+<!--<string name="server_adress">http://13.231.147.7:8000</string>-->
+    <string name="server_adress">http://172.30.1.45:8000</string>
+<!--    <string name="server_adress">http://10.0.2.2:8000</string>-->
     <string name="auto_login_id"></string>
     <string name="auto_login_password"></string>
     <string name="id_rule">Please enter no more than 15 numbers or letters without spaces.</string>
@@ -17,4 +19,8 @@
     <string name="enter_content">Please enter your content</string>
     <string name="exit_info">Are you sure you want to quit?</string>
     <string name="logout_info">Are you sure you want to sign out?</string>
+    <string name="signup_info">I agree with the app "Terms and Conditions" and "Personal Information Processing Policy".</string>
+    <string name="terms_condition">Terms and Conditions</string>
+    <string name="processing_policy">Personal Information Processing Policy</string>
+    <string name="signup_check_rule">You must agree to the terms and conditions first.</string>
 </resources>

@@ -117,9 +117,11 @@ class Board : AppCompatActivity() {
                 else if(checkAuthorData?.code.equals("001")){
                     binding.modify.visibility = View.GONE
                     binding.delete.visibility = View.GONE
+                    toast(checkAuthorData?.msg.toString())
                 } else{
                     binding.modify.visibility = View.GONE
                     binding.delete.visibility = View.GONE
+                    toast(checkAuthorData?.msg.toString())
                 }
             }
 

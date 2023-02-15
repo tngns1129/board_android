@@ -52,6 +52,22 @@
                 android:text="@string/pw_rule"
                 android:visibility="gone"
                 android:id="@+id/pw_rule"></TextView>
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="@string/signup_info"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+                <CheckBox android:id="@+id/check"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"></CheckBox>
+
+                <TextView android:id="@+id/rules"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/signup_info"></TextView>
+
+            </LinearLayout>
         </LinearLayout>
         <View
             android:layout_width="0dp"
