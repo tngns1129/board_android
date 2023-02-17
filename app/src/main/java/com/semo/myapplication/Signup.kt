@@ -82,7 +82,6 @@ class Signup : AppCompatActivity() {
                     signupService.requestSignup(id!!, pw!!).enqueue(object : Callback<SignupData> {
                         override fun onFailure(call: Call<SignupData>, t: Throwable) {
                             t.message?.let { it1 -> Log.e("SIGNUP", it1) }
-                            signup?.let { it1 -> toast(it1.msg) }
                         }
 
                         override fun onResponse(
@@ -91,9 +90,10 @@ class Signup : AppCompatActivity() {
                         ) {
                             signup = response.body()
                             Log.d("SIGNUP", "code : " + signup?.code)
-                            signup?.let { it1 -> toast(it1.msg) }
                             if (signup?.code.equals("000")) {
                                 finish()
+                            } else if(signup?.code.equals("001")){
+                                toast(resources.getString(R.string.exist_id))
                             }
                         }
                     })

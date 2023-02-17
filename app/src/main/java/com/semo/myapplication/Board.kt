@@ -5,6 +5,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -51,7 +54,6 @@ class Board : AppCompatActivity() {
         // 인스턴스를 활용하여 생성된 뷰를 액티비티에 표시 합니다.
         setContentView(binding.root)
         binding.content.movementMethod = ScrollingMovementMethod.getInstance()
-
         title = intent.getStringExtra("title")
 
         binding.title.setText(title)
@@ -136,8 +138,10 @@ class Board : AppCompatActivity() {
             }
             override fun onResponse(call: Call<ContentViewData>, response: Response<ContentViewData>) {
                 contentData = response.body()
-                binding.content.setText(contentData!!.content.content)
-                content = contentData!!.content.content
+                if(contentData != null) {
+                    binding.content.setText(contentData!!.content.content)
+                    content = contentData!!.content.content
+                }
             }
         })
         binding.content.setText(content)
@@ -154,4 +158,19 @@ class Board : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.item1 -> {
+                toast("Hi")
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflatrer: MenuInflater = menuInflater
+        inflatrer.inflate(R.menu.option_menu, menu)
+        return true
+    }
 }

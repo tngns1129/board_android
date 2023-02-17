@@ -53,7 +53,6 @@ class BoardList : AppCompatActivity() {
         binding.postlist.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.postlist.adapter = listAdapter
 
-
         binding.writing.setOnClickListener {
             val writingIntent = Intent(this, Writing::class.java)
             writingIntent.putExtra("user", user)
@@ -83,7 +82,6 @@ class BoardList : AppCompatActivity() {
                     })
             dialog.show()
         }
-
 
         // 아이템 추가
         /*
