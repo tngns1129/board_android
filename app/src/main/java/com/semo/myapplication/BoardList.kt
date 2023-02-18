@@ -11,17 +11,22 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.os.UserManagerCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
 import com.semo.myapplication.databinding.ActivityPostListBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.function.Predicate
 
 class BoardList : AppCompatActivity() {
 
-    private lateinit var sharedPreferences : SharedPreferences
-    private lateinit var editor : SharedPreferences.Editor
+    private lateinit var shared_login : SharedPreferences
+    private lateinit var shared_block : SharedPreferences
+    private lateinit var login_editor : SharedPreferences.Editor
+    private lateinit var block_editor : SharedPreferences.Editor
+    var block_list =  ArrayList<Int>();
 
     // 전역 변수로 바인딩 객체 선언
     private var mBinding: ActivityPostListBinding? = null
@@ -46,8 +51,10 @@ class BoardList : AppCompatActivity() {
         val user = intent.getSerializableExtra("user") as UserData
         listAdapter = user?.let { BoardListAdapter(itemList, it) }!!
 
-        sharedPreferences = getSharedPreferences("loginInfo", MODE_PRIVATE)
-        editor = sharedPreferences.edit()
+        shared_login = getSharedPreferences("loginInfo", MODE_PRIVATE)
+        login_editor = shared_login.edit()
+
+
 
         // 레이아웃 매니저와 어댑터 설정
         binding.postlist.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
@@ -73,9 +80,9 @@ class BoardList : AppCompatActivity() {
                     })
                 .setNeutralButton(R.string.signout,
                     DialogInterface.OnClickListener { dialogInterface, i ->
-                        editor.putString("id","")
-                        editor.putString("pw","")
-                        editor.commit()
+                        login_editor.putString("id","")
+                        login_editor.putString("pw","")
+                        login_editor.commit()
                         val signinIntent = Intent(this, Signin::class.java)
                         startActivity(signinIntent)
                         finish()
@@ -115,18 +122,36 @@ class BoardList : AppCompatActivity() {
             .build()
         var boardService: BoardService = retrofit.create(BoardService::class.java)
 
+        shared_block = getSharedPreferences("postBlockList", MODE_PRIVATE)
+        val blocklist = shared_block.getString("post_id","")
+        if(!blocklist.isNullOrBlank()) {
+            block_list =
+                Gson().fromJson(blocklist, Array<Int>::class.java)
+                    .toMutableList() as ArrayList<Int>
+        }else{
+            block_list.clear()
+        }
         boardService.titleview().enqueue(object: Callback<List<TitleViewData>> {
             override fun onFailure(call: Call<List<TitleViewData>>, t: Throwable) {
                 Log.d("board",t.toString())
             }
 
             override fun onResponse(call: Call<List<TitleViewData>>, response: Response<List<TitleViewData>>) {
-                Log.d("board","body : "+ response.body())
+                Log.d("boardsss","body : "+ response.body())
                 post = response.body()
                 itemList.clear()
+
                 for (i in post!!.reversed()) {
                     itemList.add(TitleViewData(i.title,i.brief_description,i.updated_date,i.user,i.id))
                 }
+                for (i in post!!.reversed()) {
+                    for(k in block_list){
+                        if(i.id == k){
+                            itemList.remove(i)
+                        }
+                    }
+                }
+                Log.d("block",block_list.toString())
                 binding.postlist.layoutManager = LinearLayoutManager(this@BoardList, LinearLayoutManager.VERTICAL, false)
                 binding.postlist.adapter = listAdapter
             }

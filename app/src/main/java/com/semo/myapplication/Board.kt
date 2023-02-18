@@ -2,6 +2,7 @@ package com.semo.myapplication
 
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
 import android.util.Log
@@ -13,14 +14,19 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
 import com.semo.myapplication.databinding.ActivityPostBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import kotlin.properties.Delegates
 
 class Board : AppCompatActivity() {
+
+    private lateinit var sharedPreferences : SharedPreferences
+    private lateinit var editor : SharedPreferences.Editor
 
     // 전역 변수로 바인딩 객체 선언
     private var mBinding: ActivityPostBinding? = null
@@ -40,6 +46,9 @@ class Board : AppCompatActivity() {
     var contentData:ContentViewData? = null
     var checkAuthorData:CheckAuthorData? = null
 
+    var block_posts: String? = null
+    var block_list =  ArrayList<Int>();
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -55,6 +64,15 @@ class Board : AppCompatActivity() {
         setContentView(binding.root)
         binding.content.movementMethod = ScrollingMovementMethod.getInstance()
         title = intent.getStringExtra("title")
+
+        sharedPreferences = getSharedPreferences("postBlockList", MODE_PRIVATE)
+        var blocklist = sharedPreferences.getString("post_id","")
+
+        if(!blocklist.isNullOrBlank()) {
+            block_list =
+                Gson().fromJson(blocklist, Array<Int>::class.java)
+                    .toMutableList() as ArrayList<Int>
+        }
 
         binding.title.setText(title)
         boardService.contentview(intent.getIntExtra("post_id",-1)).enqueue(object: Callback<ContentViewData> {
@@ -97,6 +115,38 @@ class Board : AppCompatActivity() {
             modifyIntent.putExtra("post_id", post_id)
             modifyIntent.putExtra("user_id", user_id)
             startActivity(modifyIntent)
+        }
+        binding.report.setOnClickListener{
+            var colorArray: Array<String> = arrayOf(
+                resources.getString(R.string.report_list_1),
+                resources.getString(R.string.report_list_2),
+                resources.getString(R.string.report_list_3)) // 리스트에 들어갈 Array
+
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle(resources.getString(R.string.report))
+                .setItems(colorArray,
+                    DialogInterface.OnClickListener { dialog, which ->
+                        // 여기서 인자 'which'는 배열의 position을 나타냅니다.
+                        editor = sharedPreferences.edit()
+                        if(which == 0) {
+                            block_list.add(post_id!!)
+                            block_posts = Gson().toJson(block_list)
+                            editor.putString("post_id", block_posts)
+                            editor.commit()
+                        } else if(which ==1){
+                            block_list.add(post_id!!)
+                            block_posts = Gson().toJson(block_list)
+                            editor.putString("post_id", block_posts)
+                            editor.commit()
+                        } else if(which ==2){
+                            block_list.add(post_id!!)
+                            block_posts = Gson().toJson(block_list)
+                            editor.putString("post_id", block_posts)
+                            editor.commit()
+                        }
+                    })
+            // 다이얼로그를 띄워주기
+            builder.show()
 
         }
 
