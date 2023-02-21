@@ -111,9 +111,10 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="300dp"
         android:scrollbars="vertical"
         android:fillViewport="true"
+        android:layout_marginRight="5dp"
         >
         <TextView
             android:id="@+id/content"
@@ -127,4 +128,35 @@
             android:padding="5dp"
             ></TextView>
     </ScrollView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="10">
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/commentlist"
+        tools:listitem="@layout/view_comment_list"
+        android:layout_weight="10">
+    </androidx.recyclerview.widget.RecyclerView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="10"
+            android:layout_gravity="bottom">
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="9.9"
+            android:id="@+id/conmment"></EditText>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/confirm"
+                android:layout_gravity="right"
+                android:id="@+id/confirm"></Button>
+        </LinearLayout>
+</LinearLayout>
 </LinearLayout>

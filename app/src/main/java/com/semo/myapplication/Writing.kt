@@ -52,7 +52,7 @@ class Writing : AppCompatActivity () {
                     writing = response.body()
                     Log.d("POST","code : "+writing?.code)
                     if(writing?.code.equals("000")){
-                        toast("글작성 성공")
+                        toast(resources.getString(R.string.writesuccess))
                         finish()
                     }
                 }

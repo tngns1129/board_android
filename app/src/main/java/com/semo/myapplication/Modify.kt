@@ -1,7 +1,10 @@
 package com.semo.myapplication
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -40,8 +43,6 @@ class Modify: AppCompatActivity() {
             .build()
         var boardService: BoardService = retrofit.create(BoardService::class.java)
 
-
-
         title = intent.getStringExtra("title")
         content = intent.getStringExtra("content")
         post_id = intent.getIntExtra("post_id",0)
@@ -57,11 +58,22 @@ class Modify: AppCompatActivity() {
                 Callback<ModifyData> {
                 override fun onResponse(call: Call<ModifyData>, response: Response<ModifyData>) {
                     modyfiyData = response.body()
+                    Log.d("modifydata",modyfiyData.toString())
                     if(modyfiyData?.code.equals("000")){
+                        // 결과 돌려줄 인텐트 생성 후 저장
+                        val returnIntent = Intent()
+                        // 값 담기
+                        returnIntent.putExtra("modifyTitle", modyfiyData?.content?.title)
+                        returnIntent.putExtra("modifyContent",modyfiyData?.content?.content)
+                        returnIntent.putExtra("modifyDate",modyfiyData?.content?.updated_date)
+                        // 값 전달
+                        // setResult() 첫번째 파라미터 - 상태값, 두번째 파라미터 - 전달하려는 인텐트
+                        setResult(Activity.RESULT_OK,returnIntent)
+                        // 최종 전달
                         finish()
                     }
                     else if(modyfiyData?.code.equals("001")){ //작가 불일치
-                        toast("작가 불일치")
+                        toast(resources.getString(R.string.authormiss))
                     }
                 }
                 override fun onFailure(call: Call<ModifyData>, t: Throwable) {
@@ -82,5 +94,6 @@ class Modify: AppCompatActivity() {
     fun toast(message:String){
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
+
 
 }

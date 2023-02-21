@@ -56,7 +56,7 @@ class Signin : AppCompatActivity() {
                 signinService.requestSignin(id, pw).enqueue(object : Callback<SigninData> {
                     override fun onFailure(call: Call<SigninData>, t: Throwable) {
                         t.message?.let { it1 -> Log.e("LOGIN", it1) }
-                        toast("서버 연결 실패")
+                        toast(resources.getString(R.string.server_adress))
                         binding.loginView.visibility = View.VISIBLE
                         binding.semo.visibility = View.GONE
                         binding.loading.visibility = View.GONE
@@ -70,14 +70,14 @@ class Signin : AppCompatActivity() {
                         Log.d("SIGNINnn", "response : \n" + signin)
                         when (signin?.code) {
                             "000" -> { //성공
-                                toast("자동 로그인 성공")
+                                toast(resources.getString(R.string.autologin))
                                 val user = UserData(signin!!.user.id, id)
                                 mainIntent.putExtra("user", user)
                                 startActivity(mainIntent)
                                 finish()
                             }
                             "001" -> { //id 불일치
-                                toast("자동 로그인 실패\n계정을 확인하세요")
+                                toast(resources.getString(R.string.autologinfail)+"\n"+resources.getString(R.string.checkid))
                                 mBinding!!.userid.setText("")
                                 mBinding!!.userpassward.setText("")
                                 binding.loginView.visibility = View.VISIBLE
@@ -85,7 +85,7 @@ class Signin : AppCompatActivity() {
                                 binding.loading.visibility = View.GONE
                             }
                             "002" -> { //pw 불일치
-                                toast("자동 로그인 실패\n패스워드가 일치하지 않습니다")
+                                toast(resources.getString(R.string.autologinfail)+"\n"+resources.getString(R.string.checkpw))
                                 mBinding!!.userpassward.setText("")
                                 binding.loginView.visibility = View.VISIBLE
                                 binding.semo.visibility = View.GONE
@@ -128,7 +128,7 @@ class Signin : AppCompatActivity() {
                 signinService.requestSignin(id, pw).enqueue(object : Callback<SigninData> {
                     override fun onFailure(call: Call<SigninData>, t: Throwable) {
                         t.message?.let { it1 -> Log.e("LOGIN", it1) }
-                        toast("서버 연결 실패")
+                        toast(resources.getString(R.string.serverfail))
                     }
                     override fun onResponse(
                         call: Call<SigninData>,
@@ -138,7 +138,7 @@ class Signin : AppCompatActivity() {
                         Log.d("SIGNINnn", "response : \n" + signin)
                         when (signin?.code) {
                             "000" -> { //성공
-                                toast("로그인 성공")
+                                toast(resources.getString(R.string.loginsuccess))
                                 editor.putString("id", mBinding!!.userid.text.toString())
                                 editor.putString("pw", mBinding!!.userpassward.text.toString())
                                 editor.commit()
@@ -148,12 +148,12 @@ class Signin : AppCompatActivity() {
                                 finish()
                             }
                             "001" -> { //id 불일치
-                                toast("계정을 확인하세요")
+                                toast(resources.getString(R.string.checkid))
                                 mBinding!!.userid.setText("")
                                 mBinding!!.userpassward.setText("")
                             }
                             "002" -> { //pw 불일치
-                                toast("패스워드가 일치하지 않습니다")
+                                toast(resources.getString(R.string.checkpw))
                                 mBinding!!.userpassward.setText("")
                             }
                         }

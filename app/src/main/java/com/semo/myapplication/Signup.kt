@@ -39,8 +39,8 @@ class Signup : AppCompatActivity() {
         val processPattern = Pattern.compile(resources.getString(R.string.processing_policy))
 
         val mTransform = Linkify.TransformFilter { match, url -> "" }
-        Linkify.addLinks(binding.rules,usePattern,"https://sites.google.com/view/boardrodlswjdqh/%ED%99%88",null,mTransform)
-        Linkify.addLinks(binding.rules,processPattern,"https://sites.google.com/view/boardrodlswjdqh/%ED%99%88",null,mTransform)
+        Linkify.addLinks(binding.rules,usePattern,resources.getString(R.string.terms_use),null,mTransform)
+        Linkify.addLinks(binding.rules,processPattern,resources.getString(R.string.terms_use),null,mTransform)
 
         var retrofit = Retrofit.Builder()
             .baseUrl(resources.getString(R.string.server_adress))

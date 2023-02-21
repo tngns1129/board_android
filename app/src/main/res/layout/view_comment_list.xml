@@ -29,13 +29,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/material_dynamic_primary0"
+                    android:textColor="@color/black"
                     android:textSize="22dp"
                     android:textStyle="bold"
-                    android:text="title"
+                    android:text="comment"
                     android:maxLength="35"
                     android:layout_weight="100"
-                    android:id="@+id/post_title"/>
+                    android:id="@+id/comment"
+                    />
                 <View
                     android:layout_width="0dp"
                     android:layout_height="0dp"></View>
@@ -54,16 +55,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:weightSum="100">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="#666666"
-                    android:textSize="17dp"
-                    android:text="conent"
-                    android:maxLength="15"
-                    android:layout_weight="100"
-                    android:id="@+id/post_content">
-                </TextView>
                 <View
                     android:layout_width="0dp"
                     android:layout_height="0dp"></View>

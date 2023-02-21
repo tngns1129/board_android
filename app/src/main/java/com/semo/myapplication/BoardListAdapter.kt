@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.semo.myapplication.databinding.ActivityPostListBinding
 
 class BoardListAdapter(
-    val contents: ArrayList<TitleViewData>,
+    val contents: ArrayList<BriefContentData>,
     val user:UserData
 ) : RecyclerView.Adapter<BoardListAdapter.PostViewHolder>() {
 
@@ -30,11 +30,12 @@ class BoardListAdapter(
     }
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
-        holder.title.text = contents[position].title
+        holder.title.text = contents[position].title + "     [" + contents[position].comment_count + "]"
         holder.contents.text = contents[position].brief_description
         holder.author.text = contents[position].user.username
         var d:String
         var t:String
+        var date:String
 
         if(contents[position].updated_date.toString().substring(5 until 6).equals("0")) // 월 10의자리
             d = contents[position].updated_date.toString().substring(6 until 7)     //월 1자리 입력
@@ -46,16 +47,18 @@ class BoardListAdapter(
         Log.d("date", contents[position].updated_date.toString())
 
         t = contents[position].updated_date.toString().substring(11 until 16)
-        holder.date.text = d+ " "+t
+        date = d+ " "+t
+        holder.date.text = date
 
         holder.itemView.setOnClickListener(){
             val intent = Intent(holder.itemView?.context, Board::class.java)
             intent.putExtra("title", holder.title.text.toString())
             intent.putExtra("brief_description", contents[position].brief_description)
-            intent.putExtra("updated_date", d+ " "+t)
+            intent.putExtra("updated_date", date)
             intent.putExtra("author", contents[position].user?.username)
             intent.putExtra("post_id", contents[position].id)
             intent.putExtra("user_id",user.id)
+            intent.putExtra("user", user)
             ContextCompat.startActivities(holder.itemView.context, arrayOf(intent), null)
         }
 

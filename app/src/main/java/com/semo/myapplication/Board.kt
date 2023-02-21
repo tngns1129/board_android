@@ -1,5 +1,7 @@
 package com.semo.myapplication
 
+import android.app.Activity
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
@@ -10,10 +12,12 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.snackbar.Snackbar
+import androidx.core.view.size
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.semo.myapplication.databinding.ActivityPostBinding
 import retrofit2.Call
@@ -21,7 +25,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import kotlin.properties.Delegates
 
 class Board : AppCompatActivity() {
 
@@ -45,9 +48,15 @@ class Board : AppCompatActivity() {
     var modyfiyData:ModifyData? = null
     var contentData:ContentViewData? = null
     var checkAuthorData:CheckAuthorData? = null
+    var commentData:CommentViewData?=null
+    var commentWriteData:CommentWriteData?=null
 
     var block_posts: String? = null
     var block_list =  ArrayList<Int>();
+
+    val itemList = arrayListOf<CommentData>()      // 아이템 배열
+    // 어댑터
+    lateinit var listAdapter:CommentListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +71,11 @@ class Board : AppCompatActivity() {
         // getRoot 메서드로 레이아웃 내부의 최상위 위치 뷰의
         // 인스턴스를 활용하여 생성된 뷰를 액티비티에 표시 합니다.
         setContentView(binding.root)
+        val user = intent.getSerializableExtra("user") as UserData
+        listAdapter = user?.let { CommentListAdapter(itemList, it) }!!
+        // 레이아웃 매니저와 어댑터 설정
+        binding.commentlist.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        binding.commentlist.adapter = listAdapter
         binding.content.movementMethod = ScrollingMovementMethod.getInstance()
         title = intent.getStringExtra("title")
 
@@ -74,12 +88,13 @@ class Board : AppCompatActivity() {
                     .toMutableList() as ArrayList<Int>
         }
 
-        binding.title.setText(title)
+        //binding.title.setText(title)
         boardService.contentview(intent.getIntExtra("post_id",-1)).enqueue(object: Callback<ContentViewData> {
             override fun onFailure(call: Call<ContentViewData>, t: Throwable) {
             }
             override fun onResponse(call: Call<ContentViewData>, response: Response<ContentViewData>) {
                 contentData = response.body()
+                binding.title.setText(contentData!!.content.title)
                 binding.content.setText(contentData!!.content.content)
                 content = contentData!!.content.content
             }
@@ -100,10 +115,10 @@ class Board : AppCompatActivity() {
                 override fun onResponse(call: Call<DeleteData>, response: Response<DeleteData>) {
                     deleteData = response.body()
                     if(deleteData?.code.equals("000")) {
-                        toast("삭제성공")
+                        toast(resources.getString(R.string.deleted))
                         finish()
                     } else if(deleteData?.code.equals("001")) {
-                        toast("작가 불일치")
+                        toast(resources.getString(R.string.authormiss))
                     }
                 }
             })
@@ -121,7 +136,6 @@ class Board : AppCompatActivity() {
                 resources.getString(R.string.report_list_1),
                 resources.getString(R.string.report_list_2),
                 resources.getString(R.string.report_list_3)) // 리스트에 들어갈 Array
-
             val builder = AlertDialog.Builder(this)
             builder.setTitle(resources.getString(R.string.report))
                 .setItems(colorArray,
@@ -147,9 +161,45 @@ class Board : AppCompatActivity() {
                     })
             // 다이얼로그를 띄워주기
             builder.show()
+        }
+        binding.confirm.setOnClickListener{
+            var retrofit = Retrofit.Builder()
+                .baseUrl(resources.getString(R.string.server_adress))
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+            var boardService: BoardService = retrofit.create(BoardService::class.java)
+            var content:String = binding.conmment.text.toString()
+            boardService.writecommentview(post_id!!,user_id,content).enqueue(object : Callback<CommentWriteData> {
+                override fun onFailure(call: Call<CommentWriteData>, t: Throwable) {
+                    Log.d("writecomment", t.toString())
+                }
+                override fun onResponse(
+                    call: Call<CommentWriteData>,
+                    response: Response<CommentWriteData>
+                ) {
+
+                    commentWriteData = response.body()
+                    Log.d("writecomment", commentWriteData.toString())
+                    //if(commentWriteData != null){
+                        if(commentWriteData!!.code == "000"){
+                            itemList.add(CommentData(
+                                commentWriteData!!.comment?.content,
+                                commentWriteData!!.comment?.updated_date,
+                                commentWriteData!!.comment?.user
+
+                            ))
+                            listAdapter.notifyItemChanged(itemList.size)
+                        }
+
+                    //}
+                }
+            })
+            binding.conmment.setText("")
+            val imm: InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+            binding.commentlist.smoothScrollToPosition(itemList.size)
 
         }
-
     }
 
     override fun onResume() {
@@ -158,40 +208,62 @@ class Board : AppCompatActivity() {
             .baseUrl(resources.getString(R.string.server_adress))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
+
         var boardService: BoardService = retrofit.create(BoardService::class.java)
-        boardService.checkauthor(post_id!!,user_id,).enqueue(object : Callback<CheckAuthorData>{
-            override fun onResponse(call: Call<CheckAuthorData>, response: Response<CheckAuthorData>) {
+        boardService.checkauthor(post_id!!, user_id,).enqueue(object : Callback<CheckAuthorData> {
+            override fun onResponse(
+                call: Call<CheckAuthorData>,
+                response: Response<CheckAuthorData>
+            ) {
                 checkAuthorData = response.body()
-                if(checkAuthorData?.code.equals("000")){
+                if (checkAuthorData?.code.equals("000")) {
                     binding.modify.visibility = View.VISIBLE
                     binding.delete.visibility = View.VISIBLE
-                }
-                else if(checkAuthorData?.code.equals("001")){
+                } else if (checkAuthorData?.code.equals("001")) {
                     binding.modify.visibility = View.GONE
                     binding.delete.visibility = View.GONE
-                    toast(checkAuthorData?.msg.toString())
-                } else{
+                } else {
                     binding.modify.visibility = View.GONE
                     binding.delete.visibility = View.GONE
-                    toast(checkAuthorData?.msg.toString())
                 }
             }
-
             override fun onFailure(call: Call<CheckAuthorData>, t: Throwable) {
-
-
             }
-
         })
-        boardService.contentview(intent.getIntExtra("post_id",-1)).enqueue(object: Callback<ContentViewData> {
-            override fun onFailure(call: Call<ContentViewData>, t: Throwable) {
-            }
-            override fun onResponse(call: Call<ContentViewData>, response: Response<ContentViewData>) {
-                contentData = response.body()
-                if(contentData != null) {
-                    binding.content.setText(contentData!!.content.content)
-                    content = contentData!!.content.content
+        boardService.contentview(intent.getIntExtra("post_id", -1))
+            .enqueue(object : Callback<ContentViewData> {
+                override fun onFailure(call: Call<ContentViewData>, t: Throwable) {
                 }
+
+                override fun onResponse(
+                    call: Call<ContentViewData>,
+                    response: Response<ContentViewData>
+                ) {
+                    contentData = response.body()
+                    if (contentData != null) {
+                        binding.title.setText(contentData!!.content.title)
+                        binding.content.setText(contentData!!.content.content)
+                        content = contentData!!.content.content
+                    }
+                }
+            })
+        boardService.commentview(post_id!!).enqueue(object : Callback<CommentViewData> {
+            override fun onFailure(call: Call<CommentViewData>, t: Throwable) {
+                Log.d("commentaa", t.toString())
+            }
+            override fun onResponse(
+                call: Call<CommentViewData>,
+                response: Response<CommentViewData>
+            ) {
+                commentData = response.body()
+                itemList.clear()
+                for (i in commentData!!.comments!!) {
+                    itemList.add(CommentData(i.content,i.updated_date,i.user))
+                }
+
+                Log.d("commentbb", commentData.toString())
+                binding.commentlist.layoutManager = LinearLayoutManager(this@Board, LinearLayoutManager.VERTICAL, false)
+                binding.commentlist.adapter = listAdapter
             }
         })
         binding.content.setText(content)
@@ -202,12 +274,9 @@ class Board : AppCompatActivity() {
             finish()
         }
     }
-
-
     fun toast(message:String){
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.item1 -> {
@@ -217,10 +286,21 @@ class Board : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflatrer: MenuInflater = menuInflater
         inflatrer.inflate(R.menu.option_menu, menu)
         return true
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode == Activity.RESULT_OK){
+            val title = data?.getStringExtra("modifyTitle")
+            val content = data?.getStringExtra("modifyContent")
+            val date = data?.getStringExtra("modifyDate")
+            Log.d("updateddd",date.toString())
+            binding.title.text = title
+            binding.content.text = content
+            binding.date.text = date
+        }
     }
 }

@@ -7,7 +7,7 @@ interface BoardService {
 
     @GET("/titleview/")
     fun titleview(
-    ) : Call<List<TitleViewData>>
+    ) : Call<BriefContentViewData>
 
     @FormUrlEncoded
     @POST("/contentview/")
@@ -41,5 +41,19 @@ interface BoardService {
         @Field("post_id") postid:Int,
         @Field("user_id") userid: String?,
     ) : Call<CheckAuthorData>
+
+    @FormUrlEncoded
+    @POST("/commentview/")
+    fun commentview(
+        @Field("post_id") postid: Int,
+    ) : Call<CommentViewData>
+
+    @FormUrlEncoded
+    @POST("/writecommentview/")
+    fun writecommentview(
+        @Field("post_id") postid:Int,
+        @Field("user_id") userid: String?,
+        @Field("content") title: String?,
+    ) : Call<CommentWriteData>
 
 }

@@ -5,10 +5,8 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.UserManager
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
-import androidx.core.os.UserManagerCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
@@ -18,7 +16,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.function.Predicate
 
 class BoardList : AppCompatActivity() {
 
@@ -33,11 +30,11 @@ class BoardList : AppCompatActivity() {
     // 매번 null 체크를 할 필요 없이 편의성을 위해 바인딩 변수 재 선언
     private val binding get() = mBinding!!
 
-    val itemList = arrayListOf<TitleViewData>()      // 아이템 배열
+    val itemList = arrayListOf<BriefContentData>()      // 아이템 배열
 
        // 어댑터
     lateinit var listAdapter:BoardListAdapter
-    var post:List<TitleViewData>? = null
+    var post:BriefContentViewData? = null
 
     var title:String? = null
     var author:String? = null
@@ -131,23 +128,33 @@ class BoardList : AppCompatActivity() {
         }else{
             block_list.clear()
         }
-        boardService.titleview().enqueue(object: Callback<List<TitleViewData>> {
-            override fun onFailure(call: Call<List<TitleViewData>>, t: Throwable) {
-                Log.d("board",t.toString())
+        boardService.titleview().enqueue(object: Callback<BriefContentViewData> {
+            override fun onFailure(call: Call<BriefContentViewData>, t: Throwable) {
+                Log.d("boardsss",t.toString())
             }
 
-            override fun onResponse(call: Call<List<TitleViewData>>, response: Response<List<TitleViewData>>) {
+            override fun onResponse(call: Call<BriefContentViewData>, response: Response<BriefContentViewData>) {
                 Log.d("boardsss","body : "+ response.body())
                 post = response.body()
                 itemList.clear()
-
-                for (i in post!!.reversed()) {
-                    itemList.add(TitleViewData(i.title,i.brief_description,i.updated_date,i.user,i.id))
-                }
-                for (i in post!!.reversed()) {
-                    for(k in block_list){
-                        if(i.id == k){
-                            itemList.remove(i)
+                if(post?.code == "000") {
+                    for (i in post?.content?.reversed()!!) {
+                        itemList.add(
+                            BriefContentData(
+                                i.title,
+                                i.brief_description,
+                                i.updated_date,
+                                i.user,
+                                i.id,
+                                i.comment_count
+                            )
+                        )
+                    }
+                    for (i in post?.content?.reversed()!!) {
+                        for (k in block_list) {
+                            if (i.id == k) {
+                                itemList.remove(i)
+                            }
                         }
                     }
                 }
@@ -162,7 +169,7 @@ class BoardList : AppCompatActivity() {
         // 뒤로가기 버튼 클릭
         if(System.currentTimeMillis() - mBackWait >=2000 ) {
             mBackWait = System.currentTimeMillis()
-            Snackbar.make(binding.root,"뒤로가기 버튼을 한번 더 누르면 종료됩니다.", Snackbar.LENGTH_LONG).show()
+            Snackbar.make(binding.root,resources.getString(R.string.backpress), Snackbar.LENGTH_LONG).show()
         } else {
             finish() //액티비티 종료
         }

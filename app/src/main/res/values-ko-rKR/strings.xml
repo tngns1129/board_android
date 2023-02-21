@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">게시판</string>
-    <string name="server_adress">http://13.231.147.7:8000</string>
+<!--    <string name="server_adress">http://13.231.147.7:8000</string>-->
+    <string name="server_adress">http://172.30.1.45:8000</string>
     <string name="auto_login_id"></string>
     <string name="auto_login_password"></string>
     <string name="id_rule">15자리 이하 문자나 숫자만 공백없이 입력하세요</string>
@@ -26,4 +27,15 @@
     <string name="report_list_1">불쾌감을 주는 콘텐츠</string>
     <string name="report_list_2">허위사실 유포</string>
     <string name="report_list_3">무단 광고/홍보</string>
+    <string name="deleted">삭제 완료</string>
+    <string name="authormiss">작가 불일치</string>
+    <string name="backpress">뒤로가기 버튼을 한번 더 누르면 종료됩니다.</string>
+    <string name="serverfail">서버 연결 실패</string>
+    <string name="autologin">자동 로그인 성공</string>
+    <string name="autologinfail">자동 로그인 실패</string>
+    <string name="writesuccess">글작성 성공</string>
+    <string name="loginsuccess">로그인 성공</string>
+    <string name="checkid">아이디를 확인해주세요</string>
+    <string name="checkpw">비밀번호를 확인해주세요</string>
+    <string name="terms_use">https://sites.google.com/view/boardrodlswjdqh/%ED%99%88</string>
 </resources>
