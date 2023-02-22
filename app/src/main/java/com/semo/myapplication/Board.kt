@@ -18,6 +18,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.size
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.ads.AdRequest
 import com.google.gson.Gson
 import com.semo.myapplication.databinding.ActivityPostBinding
 import retrofit2.Call
@@ -71,6 +72,10 @@ class Board : AppCompatActivity() {
         // getRoot 메서드로 레이아웃 내부의 최상위 위치 뷰의
         // 인스턴스를 활용하여 생성된 뷰를 액티비티에 표시 합니다.
         setContentView(binding.root)
+
+        val adRequest = AdRequest.Builder().build()
+        binding.adView.loadAd(adRequest)
+
         val user = intent.getSerializableExtra("user") as UserData
         listAdapter = user?.let { CommentListAdapter(itemList, it) }!!
         // 레이아웃 매니저와 어댑터 설정

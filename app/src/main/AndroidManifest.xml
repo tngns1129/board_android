@@ -23,7 +23,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".Signup"></activity>
-        <activity android:name=".Board"></activity>
+        <activity android:name=".Board"
+            android:windowSoftInputMode="adjustResize"></activity>
         <activity android:name=".Writing"></activity>
         <activity android:name=".Modify"></activity>
         <activity
@@ -33,6 +34,11 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+        <!-- Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713 -->
+        <!-- My AdMob app ID: ca-app-pub-6471197578074134~9367697867 -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-6471197578074134~9367697867"/>
     </application>
 
 </manifest>

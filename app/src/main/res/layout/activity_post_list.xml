@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".BoardList"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:weightSum="10">
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -26,7 +27,8 @@
                     android:text="Semo"
                     android:textAllCaps="false"
                     android:textSize="23dp"
-                    android:background="@drawable/transparent_button">
+                    android:background="@drawable/transparent_button"
+                    android:textColor="?attr/colorOnSecondary">
                 </Button>
 
                 <ImageButton
@@ -42,13 +44,30 @@
                     android:padding="10dp">
                 </ImageButton>
         </androidx.appcompat.widget.Toolbar>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="10">
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/postlist"
             tools:listitem="@layout/view_post_list">
         </androidx.recyclerview.widget.RecyclerView>
-
+</LinearLayout>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+        <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            ads:adSize="BANNER"
+            ads:adUnitId="ca-app-pub-6471197578074134/2077199508"
+            android:id="@+id/adView"
+            >
+        </com.google.android.gms.ads.AdView>
+</LinearLayout>
 
 
 </LinearLayout>

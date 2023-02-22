@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.ads.AdRequest
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.semo.myapplication.databinding.ActivityPostListBinding
@@ -45,13 +46,12 @@ class BoardList : AppCompatActivity() {
         // getRoot 메서드로 레이아웃 내부의 최상위 위치 뷰의
         // 인스턴스를 활용하여 생성된 뷰를 액티비티에 표시 합니다.
         setContentView(binding.root)
+        val adRequest = AdRequest.Builder().build()
+        binding.adView.loadAd(adRequest)
         val user = intent.getSerializableExtra("user") as UserData
         listAdapter = user?.let { BoardListAdapter(itemList, it) }!!
-
         shared_login = getSharedPreferences("loginInfo", MODE_PRIVATE)
         login_editor = shared_login.edit()
-
-
 
         // 레이아웃 매니저와 어댑터 설정
         binding.postlist.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
