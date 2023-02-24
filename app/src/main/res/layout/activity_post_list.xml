@@ -44,7 +44,8 @@
                     android:padding="10dp">
                 </ImageButton>
         </androidx.appcompat.widget.Toolbar>
-<LinearLayout
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    android:id="@+id/refresh"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_weight="10">
@@ -54,7 +55,7 @@
             android:id="@+id/postlist"
             tools:listitem="@layout/view_post_list">
         </androidx.recyclerview.widget.RecyclerView>
-</LinearLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content">

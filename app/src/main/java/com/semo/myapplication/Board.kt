@@ -205,6 +205,74 @@ class Board : AppCompatActivity() {
             binding.commentlist.smoothScrollToPosition(itemList.size)
 
         }
+        binding.refresh.setOnRefreshListener {
+            var retrofit = Retrofit.Builder()
+                .baseUrl(resources.getString(R.string.server_adress))
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+
+            var boardService: BoardService = retrofit.create(BoardService::class.java)
+            boardService.checkauthor(post_id!!, user_id,).enqueue(object : Callback<CheckAuthorData> {
+                override fun onResponse(
+                    call: Call<CheckAuthorData>,
+                    response: Response<CheckAuthorData>
+                ) {
+                    checkAuthorData = response.body()
+                    if (checkAuthorData?.code.equals("000")) {
+                        binding.modify.visibility = View.VISIBLE
+                        binding.delete.visibility = View.VISIBLE
+                    } else if (checkAuthorData?.code.equals("001")) {
+                        binding.modify.visibility = View.GONE
+                        binding.delete.visibility = View.GONE
+                    } else {
+                        binding.modify.visibility = View.GONE
+                        binding.delete.visibility = View.GONE
+                    }
+                }
+                override fun onFailure(call: Call<CheckAuthorData>, t: Throwable) {
+                }
+            })
+            boardService.contentview(intent.getIntExtra("post_id", -1))
+                .enqueue(object : Callback<ContentViewData> {
+                    override fun onFailure(call: Call<ContentViewData>, t: Throwable) {
+                    }
+
+                    override fun onResponse(
+                        call: Call<ContentViewData>,
+                        response: Response<ContentViewData>
+                    ) {
+                        contentData = response.body()
+                        if (contentData != null) {
+                            binding.title.setText(contentData!!.content.title)
+                            binding.content.setText(contentData!!.content.content)
+                            content = contentData!!.content.content
+                        }
+                    }
+                })
+            boardService.commentview(post_id!!).enqueue(object : Callback<CommentViewData> {
+                override fun onFailure(call: Call<CommentViewData>, t: Throwable) {
+                    Log.d("commentaa", t.toString())
+                }
+                override fun onResponse(
+                    call: Call<CommentViewData>,
+                    response: Response<CommentViewData>
+                ) {
+                    commentData = response.body()
+                    itemList.clear()
+                    for (i in commentData!!.comments!!) {
+                        itemList.add(CommentData(i.content,i.updated_date,i.user))
+                    }
+
+                    Log.d("commentbb", commentData.toString())
+                    binding.commentlist.layoutManager = LinearLayoutManager(this@Board, LinearLayoutManager.VERTICAL, false)
+                    binding.commentlist.adapter = listAdapter
+                }
+            })
+            binding.content.setText(content)
+            binding.title.setText(title)
+            binding.date.setText(modyfiyDate)
+            binding.refresh.isRefreshing = false
+        }
     }
 
     override fun onResume() {
@@ -279,6 +347,7 @@ class Board : AppCompatActivity() {
             finish()
         }
     }
+
     fun toast(message:String){
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
@@ -291,11 +360,13 @@ class Board : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflatrer: MenuInflater = menuInflater
         inflatrer.inflate(R.menu.option_menu, menu)
         return true
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode == Activity.RESULT_OK){
@@ -308,4 +379,5 @@ class Board : AppCompatActivity() {
             binding.date.text = date
         }
     }
+
 }

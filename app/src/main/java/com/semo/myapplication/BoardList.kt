@@ -20,6 +20,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class BoardList : AppCompatActivity() {
 
+
+
     private lateinit var shared_login : SharedPreferences
     private lateinit var shared_block : SharedPreferences
     private lateinit var login_editor : SharedPreferences.Editor
@@ -46,6 +48,13 @@ class BoardList : AppCompatActivity() {
         // getRoot 메서드로 레이아웃 내부의 최상위 위치 뷰의
         // 인스턴스를 활용하여 생성된 뷰를 액티비티에 표시 합니다.
         setContentView(binding.root)
+
+        var retrofit = Retrofit.Builder()
+            .baseUrl(resources.getString(R.string.server_adress))
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+        var boardService: BoardService = retrofit.create(BoardService::class.java)
+
         val adRequest = AdRequest.Builder().build()
         binding.adView.loadAd(adRequest)
         val user = intent.getSerializableExtra("user") as UserData
@@ -87,6 +96,54 @@ class BoardList : AppCompatActivity() {
             dialog.show()
         }
 
+        binding.refresh.setOnRefreshListener {
+            shared_block = getSharedPreferences("postBlockList", MODE_PRIVATE)
+            val blocklist = shared_block.getString("post_id","")
+            if(!blocklist.isNullOrBlank()) {
+                block_list =
+                    Gson().fromJson(blocklist, Array<Int>::class.java)
+                        .toMutableList() as ArrayList<Int>
+            }else{
+                block_list.clear()
+            }
+            boardService.titleview().enqueue(object: Callback<BriefContentViewData> {
+                override fun onFailure(call: Call<BriefContentViewData>, t: Throwable) {
+                    Log.d("boardsss",t.toString())
+                }
+
+                override fun onResponse(call: Call<BriefContentViewData>, response: Response<BriefContentViewData>) {
+                    Log.d("boardsss","body : "+ response.body())
+                    post = response.body()
+                    itemList.clear()
+                    if(post?.code == "000") {
+                        for (i in post?.content?.reversed()!!) {
+                            itemList.add(
+                                BriefContentData(
+                                    i.title,
+                                    i.brief_description,
+                                    i.updated_date,
+                                    i.user,
+                                    i.id,
+                                    i.comment_count
+                                )
+                            )
+                        }
+                        for (i in post?.content?.reversed()!!) {
+                            for (k in block_list) {
+                                if (i.id == k) {
+                                    itemList.remove(i)
+                                }
+                            }
+                        }
+                    }
+                    Log.d("block",block_list.toString())
+                    binding.postlist.layoutManager = LinearLayoutManager(this@BoardList, LinearLayoutManager.VERTICAL, false)
+                    binding.postlist.adapter = listAdapter
+                }
+            })
+            binding.refresh.isRefreshing = false
+        }
+
         // 아이템 추가
         /*
         itemList.add(PostData("Ada", "010-1234-5678"))
@@ -113,6 +170,7 @@ class BoardList : AppCompatActivity() {
     override fun onResume() {
         Log.d("ListResume", "Hi")
         super.onResume()
+
         var retrofit = Retrofit.Builder()
             .baseUrl(resources.getString(R.string.server_adress))
             .addConverterFactory(GsonConverterFactory.create())

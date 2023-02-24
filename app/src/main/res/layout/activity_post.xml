@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".Board">
 
@@ -12,173 +11,184 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/post_list">
+
         <ImageButton
+            android:id="@+id/back"
             android:layout_width="20dp"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
             android:background="@drawable/transparent_button"
-            android:src="@drawable/back"
-            android:id="@+id/back">
-        </ImageButton>
+            android:scaleType="fitCenter"
+            android:src="@drawable/back"></ImageButton>
+
         <Button
             android:layout_width="80dp"
             android:layout_height="wrap_content"
+            android:background="@drawable/transparent_button"
             android:text="Semo"
             android:textAllCaps="false"
-            android:textSize="23dp"
-            android:background="@drawable/transparent_button"
-            android:textColor="?attr/colorOnSecondary">
-        </Button>
+            android:textColor="?attr/colorOnSecondary"
+            android:textSize="23dp"></Button>
+
         <ImageButton
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            android:src="@drawable/report"
             android:id="@+id/report"
-            android:background="@drawable/transparent_button"
-            android:layout_gravity="right"
-            android:padding="10dp">
-        </ImageButton>
-        <ImageButton
             android:layout_width="40dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="right"
             android:adjustViewBounds="true"
+            android:background="@drawable/transparent_button"
+            android:padding="10dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/modify"
+            android:src="@drawable/report"></ImageButton>
+
+        <ImageButton
             android:id="@+id/modify"
-            android:background="@drawable/transparent_button"
-            android:layout_gravity="right"
-            android:padding="10dp">
-        </ImageButton>
-        <ImageButton
             android:layout_width="40dp"
             android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            android:layout_marginRight="3dp"
-            android:src="@drawable/delete"
-            android:id="@+id/delete"
-            android:background="@drawable/transparent_button"
             android:layout_gravity="right"
-            android:padding="10dp">
-        </ImageButton>
+            android:adjustViewBounds="true"
+            android:background="@drawable/transparent_button"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/modify"></ImageButton>
+
+        <ImageButton
+            android:id="@+id/delete"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="3dp"
+            android:adjustViewBounds="true"
+            android:background="@drawable/transparent_button"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/delete"></ImageButton>
 
     </androidx.appcompat.widget.Toolbar>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <com.google.android.gms.ads.AdView
-            xmlns:ads="http://schemas.android.com/apk/res-auto"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            ads:adSize="BANNER"
-            ads:adUnitId="ca-app-pub-6471197578074134/5841987020"
-            android:id="@+id/adView"
-            >
-        </com.google.android.gms.ads.AdView>
-    <LinearLayout
+
+    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="10dp"
-        android:weightSum="1">
-
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:text="title"
-            android:textColor="?attr/colorOnSecondary"
-            android:textSize="30dp"></TextView>
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1"></View>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:layout_marginRight="10dp">
-        <TextView
-            android:id="@+id/author"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="author"
-            android:textSize="15dp"
-            android:textColor="?attr/colorSecondaryVariant"
-            ></TextView>
-            <TextView
-                android:id="@+id/date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="2023-02-12"
-                android:textSize="15dp"
-                android:textColor="?attr/colorSecondaryVariant"
-                ></TextView>
-        </LinearLayout>
-    </LinearLayout>
-</LinearLayout>
-
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="230dp"
-        android:scrollbars="vertical"
-        android:fillViewport="true"
-        android:layout_marginRight="5dp"
-        >
-        <TextView
-            android:id="@+id/content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="25dp"
-            android:text="content"
-            android:textColor="?attr/colorSecondaryVariant"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginBottom="10dp"
-            android:padding="5dp"
-            ></TextView>
-    </ScrollView>
-
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-6471197578074134/5841987020"></com.google.android.gms.ads.AdView>
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/refresh">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:weightSum="10">
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/commentlist"
-        tools:listitem="@layout/view_comment_list"
-        android:layout_weight="9.9">
-    </androidx.recyclerview.widget.RecyclerView>
+        android:orientation="vertical">
+
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="10"
-            android:layout_gravity="bottom">
-        <EditText
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:layout_weight="9.9"
-            android:id="@+id/conmment"></EditText>
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:text="@string/confirm"
-                android:layout_gravity="right"
-                android:id="@+id/confirm"></Button>
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="title"
+                    android:textColor="?attr/colorOnSecondary"
+                    android:textSize="30dp"></TextView>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"></View>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="10dp"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/author"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="author"
+                        android:textColor="?attr/colorSecondaryVariant"
+                        android:textSize="15dp"></TextView>
+
+                    <TextView
+                        android:id="@+id/date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2023-02-12"
+                        android:textColor="?attr/colorSecondaryVariant"
+                        android:textSize="15dp"></TextView>
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
 
-</LinearLayout>
 
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="230dp"
+            android:layout_marginRight="5dp"
+            android:fillViewport="true"
+            android:scrollbars="vertical">
+
+            <TextView
+                android:id="@+id/content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:padding="5dp"
+                android:text="content"
+                android:textColor="?attr/colorSecondaryVariant"
+                android:textSize="25dp"></TextView>
+        </ScrollView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:weightSum="10">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/commentlist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="9.9"
+                tools:listitem="@layout/view_comment_list"></androidx.recyclerview.widget.RecyclerView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:orientation="horizontal"
+                android:weightSum="10">
+
+                <EditText
+                    android:id="@+id/conmment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_weight="9.9"></EditText>
+
+                <Button
+                    android:id="@+id/confirm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_gravity="right"
+                    android:text="@string/confirm"></Button>
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </LinearLayout>
