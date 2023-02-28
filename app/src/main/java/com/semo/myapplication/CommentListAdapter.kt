@@ -90,7 +90,8 @@ class CommentListAdapter (
                                 ) {
                                     deleteData = response.body()
                                     if (deleteData?.code.equals("000")) {
-
+                                        contents.removeAt(holder.bindingAdapterPosition)
+                                        notifyDataSetChanged()
                                         Toast.makeText(holder.itemView.context,holder.itemView.resources.getString(R.string.deleted),Toast.LENGTH_SHORT).show()
                                     } else if (deleteData?.code.equals("001")) {
                                         Toast.makeText(holder.itemView.context,holder.itemView.resources.getString(R.string.authormiss),Toast.LENGTH_SHORT).show()
