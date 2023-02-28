@@ -27,6 +27,9 @@ class Signup : AppCompatActivity() {
     private val binding get() = mBinding!!
     var signup:SignupData? = null
 
+    private lateinit var retrofit:Retrofit
+    private lateinit var signupService: SignupService
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,11 +45,11 @@ class Signup : AppCompatActivity() {
         Linkify.addLinks(binding.rules,usePattern,resources.getString(R.string.terms_use),null,mTransform)
         Linkify.addLinks(binding.rules,processPattern,resources.getString(R.string.terms_use),null,mTransform)
 
-        var retrofit = Retrofit.Builder()
+        retrofit = Retrofit.Builder()
             .baseUrl(resources.getString(R.string.server_adress))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-        var signupService: SignupService = retrofit.create(SignupService::class.java)
+        signupService = retrofit.create(SignupService::class.java)
 
         var uid : String
         var id : String? = null

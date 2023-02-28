@@ -20,13 +20,14 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class BoardList : AppCompatActivity() {
 
-
-
     private lateinit var shared_login : SharedPreferences
     private lateinit var shared_block : SharedPreferences
     private lateinit var login_editor : SharedPreferences.Editor
     private lateinit var block_editor : SharedPreferences.Editor
     var block_list =  ArrayList<Int>();
+
+    private lateinit var retrofit : Retrofit
+    private lateinit var boardService: BoardService
 
     // 전역 변수로 바인딩 객체 선언
     private var mBinding: ActivityPostListBinding? = null
@@ -49,11 +50,11 @@ class BoardList : AppCompatActivity() {
         // 인스턴스를 활용하여 생성된 뷰를 액티비티에 표시 합니다.
         setContentView(binding.root)
 
-        var retrofit = Retrofit.Builder()
+        retrofit = Retrofit.Builder()
             .baseUrl(resources.getString(R.string.server_adress))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-        var boardService: BoardService = retrofit.create(BoardService::class.java)
+        boardService = retrofit.create(BoardService::class.java)
 
         val adRequest = AdRequest.Builder().build()
         binding.adView.loadAd(adRequest)
@@ -115,18 +116,33 @@ class BoardList : AppCompatActivity() {
                     Log.d("boardsss","body : "+ response.body())
                     post = response.body()
                     itemList.clear()
+                    var t:String
                     if(post?.code == "000") {
                         for (i in post?.content?.reversed()!!) {
-                            itemList.add(
-                                BriefContentData(
-                                    i.title,
-                                    i.brief_description,
-                                    i.updated_date,
-                                    i.user,
-                                    i.id,
-                                    i.comment_count
+                            if(i.title?.length!! >=10) {
+                                t = i.title!!.substring(0 until 10) + "..."
+                                itemList.add(
+                                    BriefContentData(
+                                        t,
+                                        i.brief_description,
+                                        i.updated_date,
+                                        i.user,
+                                        i.id,
+                                        i.comment_count
+                                    )
                                 )
-                            )
+                            } else{
+                                itemList.add(
+                                    BriefContentData(
+                                        i.title,
+                                        i.brief_description,
+                                        i.updated_date,
+                                        i.user,
+                                        i.id,
+                                        i.comment_count
+                                    )
+                                )
+                            }
                         }
                         for (i in post?.content?.reversed()!!) {
                             for (k in block_list) {
@@ -171,12 +187,6 @@ class BoardList : AppCompatActivity() {
         Log.d("ListResume", "Hi")
         super.onResume()
 
-        var retrofit = Retrofit.Builder()
-            .baseUrl(resources.getString(R.string.server_adress))
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-        var boardService: BoardService = retrofit.create(BoardService::class.java)
-
         shared_block = getSharedPreferences("postBlockList", MODE_PRIVATE)
         val blocklist = shared_block.getString("post_id","")
         if(!blocklist.isNullOrBlank()) {
@@ -195,18 +205,34 @@ class BoardList : AppCompatActivity() {
                 Log.d("boardsss","body : "+ response.body())
                 post = response.body()
                 itemList.clear()
+                var t:String
                 if(post?.code == "000") {
                     for (i in post?.content?.reversed()!!) {
-                        itemList.add(
-                            BriefContentData(
-                                i.title,
-                                i.brief_description,
-                                i.updated_date,
-                                i.user,
-                                i.id,
-                                i.comment_count
+
+                        if(i.title?.length!! >=10) {
+                            t = i.title!!.substring(0 until 10) + "..."
+                            itemList.add(
+                                BriefContentData(
+                                    t,
+                                    i.brief_description,
+                                    i.updated_date,
+                                    i.user,
+                                    i.id,
+                                    i.comment_count
+                                )
                             )
-                        )
+                        } else{
+                            itemList.add(
+                                BriefContentData(
+                                    i.title,
+                                    i.brief_description,
+                                    i.updated_date,
+                                    i.user,
+                                    i.id,
+                                    i.comment_count
+                                )
+                            )
+                        }
                     }
                     for (i in post?.content?.reversed()!!) {
                         for (k in block_list) {

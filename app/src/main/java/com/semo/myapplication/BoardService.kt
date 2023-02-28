@@ -56,4 +56,10 @@ interface BoardService {
         @Field("content") title: String?,
     ) : Call<CommentWriteData>
 
+    @FormUrlEncoded
+    @POST("/deletecommentview/")
+    fun deletecommentview(
+        @Field("id") id:Int?,
+        @Field("user_id") userid: String?,
+    ) : Call<DeleteData>
 }

@@ -20,6 +20,9 @@ class Signin : AppCompatActivity() {
     private lateinit var sharedPreferences : SharedPreferences
     private lateinit var editor : SharedPreferences.Editor
 
+    private lateinit var retrofit:Retrofit
+    private lateinit var signinService:SigninService
+
     // 전역 변수로 바인딩 객체 선언
     private var mBinding: ActivitySigninBinding? = null
     // 매번 null 체크를 할 필요 없이 편의성을 위해 바인딩 변수 재 선언
@@ -37,11 +40,12 @@ class Signin : AppCompatActivity() {
 //        binding.userid.setText(sharedPreferences.getString("id",""))
 //        binding.userpassward.setText(sharedPreferences.getString("pw",""))
 
-        var retrofit = Retrofit.Builder()
+        retrofit = Retrofit.Builder()
             .baseUrl(resources.getString(R.string.server_adress))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-        var signinService: SigninService = retrofit.create(SigninService::class.java)
+        signinService = retrofit.create(SigninService::class.java)
+
         val mainIntent = Intent(this, BoardList::class.java)
 
         binding.loginView.visibility = View.GONE

@@ -26,11 +26,15 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.regex.Pattern
 
 class Board : AppCompatActivity() {
 
     private lateinit var sharedPreferences : SharedPreferences
     private lateinit var editor : SharedPreferences.Editor
+
+    private lateinit var retrofit : Retrofit
+    private lateinit var boardService: BoardService
 
     // 전역 변수로 바인딩 객체 선언
     private var mBinding: ActivityPostBinding? = null
@@ -62,11 +66,11 @@ class Board : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        var retrofit = Retrofit.Builder()
+        retrofit = Retrofit.Builder()
             .baseUrl(resources.getString(R.string.server_adress))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-        var boardService: BoardService = retrofit.create(BoardService::class.java)
+        boardService= retrofit.create(BoardService::class.java)
 
         mBinding = ActivityPostBinding.inflate(layoutInflater)
         // getRoot 메서드로 레이아웃 내부의 최상위 위치 뷰의
@@ -114,19 +118,30 @@ class Board : AppCompatActivity() {
         binding.delete.setOnClickListener {
             Log.d("delete",post_id.toString())
             Log.d("delete",user_id.toString())
-            boardService.delete(post_id!!,user_id).enqueue(object: Callback<DeleteData> {
-                override fun onFailure(call: Call<DeleteData>, t: Throwable) {
-                }
-                override fun onResponse(call: Call<DeleteData>, response: Response<DeleteData>) {
-                    deleteData = response.body()
-                    if(deleteData?.code.equals("000")) {
-                        toast(resources.getString(R.string.deleted))
-                        finish()
-                    } else if(deleteData?.code.equals("001")) {
-                        toast(resources.getString(R.string.authormiss))
-                    }
-                }
-            })
+            val dialog = AlertDialog.Builder(this)
+            dialog.setTitle("")
+                .setMessage(R.string.delete_info)
+                .setPositiveButton(R.string.confirm,
+                    DialogInterface.OnClickListener { dialogInterface, i ->
+                        boardService.delete(post_id!!,user_id).enqueue(object: Callback<DeleteData> {
+                            override fun onFailure(call: Call<DeleteData>, t: Throwable) {
+                            }
+                            override fun onResponse(call: Call<DeleteData>, response: Response<DeleteData>) {
+                                deleteData = response.body()
+                                if(deleteData?.code.equals("000")) {
+                                    toast(resources.getString(R.string.deleted))
+                                    finish()
+                                } else if(deleteData?.code.equals("001")) {
+                                    toast(resources.getString(R.string.authormiss))
+                                }
+                            }
+                        })
+                    })
+                .setNegativeButton(R.string.cancel,
+                    DialogInterface.OnClickListener { dialogInterface, i ->
+                    })
+            dialog.show()
+
         }
         binding.modify.setOnClickListener {
             val modifyIntent = Intent(this, Modify::class.java)
@@ -168,50 +183,49 @@ class Board : AppCompatActivity() {
             builder.show()
         }
         binding.confirm.setOnClickListener{
-            var retrofit = Retrofit.Builder()
-                .baseUrl(resources.getString(R.string.server_adress))
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-            var boardService: BoardService = retrofit.create(BoardService::class.java)
             var content:String = binding.conmment.text.toString()
-            boardService.writecommentview(post_id!!,user_id,content).enqueue(object : Callback<CommentWriteData> {
-                override fun onFailure(call: Call<CommentWriteData>, t: Throwable) {
-                    Log.d("writecomment", t.toString())
-                }
-                override fun onResponse(
-                    call: Call<CommentWriteData>,
-                    response: Response<CommentWriteData>
-                ) {
-
-                    commentWriteData = response.body()
-                    Log.d("writecomment", commentWriteData.toString())
-                    //if(commentWriteData != null){
-                        if(commentWriteData!!.code == "000"){
-                            itemList.add(CommentData(
-                                commentWriteData!!.comment?.content,
-                                commentWriteData!!.comment?.updated_date,
-                                commentWriteData!!.comment?.user
-
-                            ))
-                            listAdapter.notifyItemChanged(itemList.size)
+            val contentPattern = "^.{1,99}$"
+            var pattern = Pattern.compile(contentPattern)
+            val contentMatcher = pattern.matcher(content)
+            if (contentMatcher.matches()) {
+                boardService.writecommentview(post_id!!, user_id, content)
+                    .enqueue(object : Callback<CommentWriteData> {
+                        override fun onFailure(call: Call<CommentWriteData>, t: Throwable) {
+                            Log.d("writecomment", t.toString())
                         }
 
-                    //}
-                }
-            })
-            binding.conmment.setText("")
-            val imm: InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
-            binding.commentlist.smoothScrollToPosition(itemList.size)
+                        override fun onResponse(
+                            call: Call<CommentWriteData>,
+                            response: Response<CommentWriteData>
+                        ) {
 
+                            commentWriteData = response.body()
+                            Log.d("writecomment", commentWriteData.toString())
+                            //if(commentWriteData != null){
+                            if (commentWriteData!!.code == "000") {
+                                itemList.add(
+                                    CommentData(
+                                        commentWriteData!!.comment?.id,
+                                        commentWriteData!!.comment?.content,
+                                        commentWriteData!!.comment?.updated_date,
+                                        commentWriteData!!.comment?.user,
+                                    )
+                                )
+                                listAdapter.notifyItemChanged(itemList.size)
+                            }
+
+                            //}
+                        }
+                    })
+                binding.conmment.setText("")
+                val imm: InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+                binding.commentlist.smoothScrollToPosition(itemList.size)
+            } else if(!contentMatcher.matches()){
+                toast(resources.getString(R.string.contentlong))
+            }
         }
         binding.refresh.setOnRefreshListener {
-            var retrofit = Retrofit.Builder()
-                .baseUrl(resources.getString(R.string.server_adress))
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-
-            var boardService: BoardService = retrofit.create(BoardService::class.java)
             boardService.checkauthor(post_id!!, user_id,).enqueue(object : Callback<CheckAuthorData> {
                 override fun onResponse(
                     call: Call<CheckAuthorData>,
@@ -260,7 +274,7 @@ class Board : AppCompatActivity() {
                     commentData = response.body()
                     itemList.clear()
                     for (i in commentData!!.comments!!) {
-                        itemList.add(CommentData(i.content,i.updated_date,i.user))
+                        itemList.add(CommentData(i.id,i.content,i.updated_date,i.user))
                     }
 
                     Log.d("commentbb", commentData.toString())
@@ -277,12 +291,6 @@ class Board : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        var retrofit = Retrofit.Builder()
-            .baseUrl(resources.getString(R.string.server_adress))
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        var boardService: BoardService = retrofit.create(BoardService::class.java)
         boardService.checkauthor(post_id!!, user_id,).enqueue(object : Callback<CheckAuthorData> {
             override fun onResponse(
                 call: Call<CheckAuthorData>,
@@ -331,7 +339,7 @@ class Board : AppCompatActivity() {
                 commentData = response.body()
                 itemList.clear()
                 for (i in commentData!!.comments!!) {
-                    itemList.add(CommentData(i.content,i.updated_date,i.user))
+                    itemList.add(CommentData(i.id,i.content,i.updated_date,i.user))
                 }
 
                 Log.d("commentbb", commentData.toString())

@@ -32,8 +32,12 @@
     <string name="autologin">Automatic login successful</string>
     <string name="autologinfail">Automatic login failed</string>
     <string name="writesuccess">writing success</string>
+    <string name="titlelong">Please write the title with at least 1 character and no more than 25 characters.</string>
+    <string name="contentlong">Please write the content with at least 1 character and no more than 100 characters.</string>
     <string name="loginsuccess">log-in succeed</string>
     <string name="checkid">please check your account</string>
     <string name="checkpw">please check your password</string>
     <string name="terms_use">https://sites.google.com/view/boardrodlswjdqh/%ED%99%88</string>
+    <string name="delete_info">Are you sure you want to delete?</string>
+    <string name="delete">delete</string>
 </resources>

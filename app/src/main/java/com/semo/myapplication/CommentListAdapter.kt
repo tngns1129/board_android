@@ -1,16 +1,29 @@
 package com.semo.myapplication
 
+import android.content.DialogInterface
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class CommentListAdapter (
     val contents: ArrayList<CommentData>,
     val user:UserData
     ) : RecyclerView.Adapter<CommentListAdapter.CommentViewHolder>(){
+
+    private lateinit var retrofit:Retrofit
+    private lateinit var boardService: BoardService
+
 
     class CommentViewHolder(itemView: View):RecyclerView.ViewHolder(itemView) {
         var comment: TextView = itemView.findViewById(R.id.comment)
@@ -20,6 +33,11 @@ class CommentListAdapter (
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.view_comment_list, parent, false)
+        retrofit = Retrofit.Builder()
+            .baseUrl(parent.context.resources.getString(R.string.server_adress))
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+        boardService = retrofit.create(BoardService::class.java)
         return CommentListAdapter.CommentViewHolder(view)
     }
 
@@ -27,6 +45,8 @@ class CommentListAdapter (
         var d:String
         var t:String
         var date:String
+        var deleteData:DeleteData? = null
+
 
         if(contents[position].updated_date.toString().length>15) {
             if (contents[position].updated_date.toString().substring(5 until 6)
@@ -49,12 +69,46 @@ class CommentListAdapter (
         holder.author.text = contents[position].user?.username
         holder.date.text = date
 
-
         holder.itemView.setOnClickListener {
 
         }
-    }
+        holder.itemView.setOnLongClickListener {
+            var colorArray: Array<String> = arrayOf(
+                holder.itemView.resources.getString(R.string.delete),
 
+            ) // 리스트에 들어갈 Array
+            val builder = AlertDialog.Builder(holder.itemView.context)
+                .setItems(colorArray,
+                    DialogInterface.OnClickListener { dialog, which ->
+                        // 여기서 인자 'which'는 배열의 position을 나타냅니다.
+                        if(which == 0) {
+                            boardService.deletecommentview(contents[position].id, contents[position].user?.id,).enqueue(object :
+                                Callback<DeleteData> {
+                                override fun onResponse(
+                                    call: Call<DeleteData>,
+                                    response: Response<DeleteData>
+                                ) {
+                                    deleteData = response.body()
+                                    if (deleteData?.code.equals("000")) {
+
+                                        Toast.makeText(holder.itemView.context,holder.itemView.resources.getString(R.string.deleted),Toast.LENGTH_SHORT).show()
+                                    } else if (deleteData?.code.equals("001")) {
+                                        Toast.makeText(holder.itemView.context,holder.itemView.resources.getString(R.string.authormiss),Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                                override fun onFailure(call: Call<DeleteData>, t: Throwable) {
+                                }
+                            })
+
+                        } else if(which ==1){
+                        } else if(which ==2){
+                        }
+                    })
+            // 다이얼로그를 띄워주기
+            builder.show()
+            return@setOnLongClickListener true
+        }
+    }
     override fun getItemCount(): Int {
         return contents.size
     }

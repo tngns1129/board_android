@@ -10,6 +10,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.regex.Pattern
 
 class Writing : AppCompatActivity () {
     // 전역 변수로 바인딩 객체 선언
@@ -17,6 +18,9 @@ class Writing : AppCompatActivity () {
     // 매번 null 체크를 할 필요 없이 편의성을 위해 바인딩 변수 재 선언
     private val binding get() = mBinding!!
     var writing:WritingData? = null
+
+    private lateinit var retrofit:Retrofit
+    private lateinit var writingService: WritingService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,11 +32,11 @@ class Writing : AppCompatActivity () {
         val intent = intent
         val user = intent.getSerializableExtra("user") as UserData
 
-        var retrofit = Retrofit.Builder()
+        retrofit = Retrofit.Builder()
             .baseUrl(resources.getString(R.string.server_adress))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-        var writingService: WritingService = retrofit.create(WritingService::class.java)
+        writingService = retrofit.create(WritingService::class.java)
 
         var title: String? = null
         var content: String? = null
@@ -45,18 +49,32 @@ class Writing : AppCompatActivity () {
             Log.d("POST", "title :"+title)
             Log.d("POST", "content :"+content)
             Log.d("POST", "uid :"+author)
-            writingService.requestPost(title,content,author).enqueue(object: Callback<WritingData> {
-                override fun onFailure(call: Call<WritingData>, t: Throwable) {
-                }
-                override fun onResponse(call: Call<WritingData>, response: Response<WritingData>) {
-                    writing = response.body()
-                    Log.d("POST","code : "+writing?.code)
-                    if(writing?.code.equals("000")){
-                        toast(resources.getString(R.string.writesuccess))
-                        finish()
+
+            val titlePattern = "^.{1,25}$"
+            var pattern = Pattern.compile(titlePattern)
+            val contentPattern = "^.{1,99}$"
+            var pattern2 = Pattern.compile(contentPattern)
+            val titleMatcher = pattern.matcher(title)
+            val contentMatcher = pattern2.matcher(content)
+            if (titleMatcher.matches() && contentMatcher.matches() ) {
+                writingService.requestPost(title,content,author).enqueue(object: Callback<WritingData> {
+                    override fun onFailure(call: Call<WritingData>, t: Throwable) {
                     }
-                }
-            })
+                    override fun onResponse(call: Call<WritingData>, response: Response<WritingData>) {
+                        writing = response.body()
+                        Log.d("POST","code : "+writing?.code)
+                        if(writing?.code.equals("000")){
+                            toast(resources.getString(R.string.writesuccess))
+                            finish()
+                        }
+                    }
+                })
+            } else if(!titleMatcher.matches()){
+                toast(resources.getString(R.string.titlelong))
+            } else if(!contentMatcher.matches()){
+                toast(resources.getString(R.string.contentlong))
+            }
+
         }
 
         binding.cancel.setOnClickListener {

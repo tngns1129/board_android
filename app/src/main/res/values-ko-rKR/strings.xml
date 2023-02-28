@@ -33,8 +33,12 @@
     <string name="autologin">자동 로그인 성공</string>
     <string name="autologinfail">자동 로그인 실패</string>
     <string name="writesuccess">글작성 성공</string>
+    <string name="titlelong">제목은 1자이상 25자 이내로 적어주세요</string>
+    <string name="contentlong">내용은 1자이상 100자 이내로 적어주세요</string>
     <string name="loginsuccess">로그인 성공</string>
     <string name="checkid">아이디를 확인해주세요</string>
     <string name="checkpw">비밀번호를 확인해주세요</string>
     <string name="terms_use">https://sites.google.com/view/boardrodlswjdqh/%ED%99%88</string>
+    <string name="delete_info">정말로 삭제하시겠습니까?</string>
+    <string name="delete">삭제</string>
 </resources>
