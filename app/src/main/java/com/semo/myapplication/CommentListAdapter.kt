@@ -24,10 +24,7 @@ class CommentListAdapter (
 
     private lateinit var retrofit:Retrofit
     private lateinit var boardService: BoardService
-
-    var block_posts: String? = null
     var block_list =  ArrayList<Int>();
-
 
     class CommentViewHolder(itemView: View):RecyclerView.ViewHolder(itemView) {
         var comment: TextView = itemView.findViewById(R.id.comment)
@@ -51,8 +48,6 @@ class CommentListAdapter (
         var t:String
         var date:String
         var deleteData:DeleteData? = null
-
-
 
         if(contents[position].updated_date.toString().length>15) {
             if (contents[position].updated_date.toString().substring(5 until 6)
@@ -81,14 +76,18 @@ class CommentListAdapter (
         holder.itemView.setOnLongClickListener {
             var colorArray: Array<String> = arrayOf(
                 holder.itemView.resources.getString(R.string.delete),
-                //holder.itemView.resources.getString(R.string.report),
-
+                holder.itemView.resources.getString(R.string.report),
+            ) // 리스트에 들어갈 Array
+            var colorsArray: Array<String> = arrayOf(
+                holder.itemView.resources.getString(R.string.report_list_1),
+                holder.itemView.resources.getString(R.string.report_list_2),
+                holder.itemView.resources.getString(R.string.report_list_3),
             ) // 리스트에 들어갈 Array
             val builder = AlertDialog.Builder(holder.itemView.context)
                 .setItems(colorArray,
                     DialogInterface.OnClickListener { dialog, which ->
                         // 여기서 인자 'which'는 배열의 position을 나타냅니다.
-                        if(which == 0) {
+                        if(which == 0) {    //댓글 삭제
                             boardService.deletecommentview(contents[position].id, contents[position].user?.id,).enqueue(object :
                                 Callback<DeleteData> {
                                 override fun onResponse(
@@ -108,8 +107,20 @@ class CommentListAdapter (
                                 }
                             })
 
-                        } else if(which ==1){
-
+                        } else if(which ==1){   //댓글 신고
+                            val builder = AlertDialog.Builder(holder.itemView.context)
+                                .setItems(colorsArray,
+                                    DialogInterface.OnClickListener { dialog, which ->
+                                        // 여기서 인자 'which'는 배열의 position을 나타냅니다.
+                                        if(which == 0) {
+                                            contents[position].id?.let { it1 -> block_list.add(it1) }
+                                        } else if(which ==1){
+                                            contents[position].id?.let { it1 -> block_list.add(it1) }
+                                        } else if(which ==2){
+                                            contents[position].id?.let { it1 -> block_list.add(it1) }
+                                        }
+                                    })
+                            builder.show()
                         } else if(which ==2){
                         }
                     })

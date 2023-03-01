@@ -91,7 +91,6 @@ class Board : AppCompatActivity() {
 
         sharedPreferences = getSharedPreferences("postBlockList", MODE_PRIVATE)
         var blocklists = sharedPreferences.getString("post_id","")
-
         if(!blocklists.isNullOrBlank()) {
             block_list =
                 Gson().fromJson(blocklists, Array<Int>::class.java)
