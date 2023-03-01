@@ -84,28 +84,26 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:weightSum="10">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:orientation="horizontal"
-                android:weightSum="1">
+                android:weightSum="10">
 
                 <TextView
                     android:id="@+id/title"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
-                    android:text="title"
+                    android:text="titletiitletitletitletiitletitletiitle"
                     android:textColor="?attr/colorOnSecondary"
-                    android:textSize="30dp"></TextView>
+                    android:textSize="30dp"
+                    android:layout_weight="10"></TextView>
 
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"></View>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
