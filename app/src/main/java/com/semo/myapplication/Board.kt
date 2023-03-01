@@ -32,6 +32,8 @@ class Board : AppCompatActivity() {
 
     private lateinit var sharedPreferences : SharedPreferences
     private lateinit var editor : SharedPreferences.Editor
+    var block_posts: String? = null
+    var block_list =  ArrayList<Int>();
 
     private lateinit var retrofit : Retrofit
     private lateinit var boardService: BoardService
@@ -56,8 +58,7 @@ class Board : AppCompatActivity() {
     var commentData:CommentViewData?=null
     var commentWriteData:CommentWriteData?=null
 
-    var block_posts: String? = null
-    var block_list =  ArrayList<Int>();
+
 
     val itemList = arrayListOf<CommentData>()      // 아이템 배열
     // 어댑터
@@ -89,11 +90,11 @@ class Board : AppCompatActivity() {
         title = intent.getStringExtra("title")
 
         sharedPreferences = getSharedPreferences("postBlockList", MODE_PRIVATE)
-        var blocklist = sharedPreferences.getString("post_id","")
+        var blocklists = sharedPreferences.getString("post_id","")
 
-        if(!blocklist.isNullOrBlank()) {
+        if(!blocklists.isNullOrBlank()) {
             block_list =
-                Gson().fromJson(blocklist, Array<Int>::class.java)
+                Gson().fromJson(blocklists, Array<Int>::class.java)
                     .toMutableList() as ArrayList<Int>
         }
 

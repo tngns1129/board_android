@@ -21,7 +21,7 @@
     <string name="processing_policy">Personal Information Processing Policy</string>
     <string name="signup_check_rule">You must agree to the terms and conditions first.</string>
     <string name="exist_id">The ID that already exists.</string>
-    <string name="report">Report</string>
+    <string name="report">Report, Block</string>
     <string name="report_list_1">Objectionable content</string>
     <string name="report_list_2">Spreading false information</string>
     <string name="report_list_3">Unauthorized advertising/promotion</string>

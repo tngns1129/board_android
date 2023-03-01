@@ -22,7 +22,7 @@
     <string name="processing_policy">개인정보처리방침</string>
     <string name="signup_check_rule">약관에 먼저 동의 하셔야합니다.</string>
     <string name="exist_id">이미 존재하는 아이디입니다.</string>
-    <string name="report">신고하기</string>
+    <string name="report">신고하기, 차단</string>
     <string name="report_list_1">불쾌감을 주는 콘텐츠</string>
     <string name="report_list_2">허위사실 유포</string>
     <string name="report_list_3">무단 광고/홍보</string>

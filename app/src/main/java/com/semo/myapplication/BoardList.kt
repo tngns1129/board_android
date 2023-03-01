@@ -144,13 +144,15 @@ class BoardList : AppCompatActivity() {
                                 )
                             }
                         }
-                        for (i in post?.content?.reversed()!!) {
-                            for (k in block_list) {
+                        val delete = arrayListOf<BriefContentData>()
+                        for (i in itemList!!) {
+                            for (k in block_list.distinct()) {
                                 if (i.id == k) {
-                                    itemList.remove(i)
+                                    delete.add(i)
                                 }
                             }
                         }
+                        itemList.removeAll(delete)
                     }
                     Log.d("block",block_list.toString())
                     binding.postlist.layoutManager = LinearLayoutManager(this@BoardList, LinearLayoutManager.VERTICAL, false)
@@ -196,6 +198,7 @@ class BoardList : AppCompatActivity() {
         }else{
             block_list.clear()
         }
+
         boardService.titleview().enqueue(object: Callback<BriefContentViewData> {
             override fun onFailure(call: Call<BriefContentViewData>, t: Throwable) {
                 Log.d("boardsss",t.toString())
@@ -208,7 +211,6 @@ class BoardList : AppCompatActivity() {
                 var t:String
                 if(post?.code == "000") {
                     for (i in post?.content?.reversed()!!) {
-
                         if(i.title?.length!! >=10) {
                             t = i.title!!.substring(0 until 10) + "..."
                             itemList.add(
@@ -234,15 +236,18 @@ class BoardList : AppCompatActivity() {
                             )
                         }
                     }
-                    for (i in post?.content?.reversed()!!) {
-                        for (k in block_list) {
+                    val delete = arrayListOf<BriefContentData>()
+                    for (i in itemList!!) {
+                        for (k in block_list.distinct()) {
                             if (i.id == k) {
-                                itemList.remove(i)
+                                delete.add(i)
                             }
                         }
                     }
+                    itemList.removeAll(delete)
                 }
-                Log.d("block",block_list.toString())
+
+
                 binding.postlist.layoutManager = LinearLayoutManager(this@BoardList, LinearLayoutManager.VERTICAL, false)
                 binding.postlist.adapter = listAdapter
             }

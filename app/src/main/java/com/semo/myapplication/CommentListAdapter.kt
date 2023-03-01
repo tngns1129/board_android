@@ -1,6 +1,7 @@
 package com.semo.myapplication
 
 import android.content.DialogInterface
+import android.content.SharedPreferences
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -24,6 +25,9 @@ class CommentListAdapter (
     private lateinit var retrofit:Retrofit
     private lateinit var boardService: BoardService
 
+    var block_posts: String? = null
+    var block_list =  ArrayList<Int>();
+
 
     class CommentViewHolder(itemView: View):RecyclerView.ViewHolder(itemView) {
         var comment: TextView = itemView.findViewById(R.id.comment)
@@ -39,6 +43,7 @@ class CommentListAdapter (
             .build()
         boardService = retrofit.create(BoardService::class.java)
         return CommentListAdapter.CommentViewHolder(view)
+
     }
 
     override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
@@ -46,6 +51,7 @@ class CommentListAdapter (
         var t:String
         var date:String
         var deleteData:DeleteData? = null
+
 
 
         if(contents[position].updated_date.toString().length>15) {
@@ -75,6 +81,7 @@ class CommentListAdapter (
         holder.itemView.setOnLongClickListener {
             var colorArray: Array<String> = arrayOf(
                 holder.itemView.resources.getString(R.string.delete),
+                //holder.itemView.resources.getString(R.string.report),
 
             ) // 리스트에 들어갈 Array
             val builder = AlertDialog.Builder(holder.itemView.context)
@@ -102,6 +109,7 @@ class CommentListAdapter (
                             })
 
                         } else if(which ==1){
+
                         } else if(which ==2){
                         }
                     })
