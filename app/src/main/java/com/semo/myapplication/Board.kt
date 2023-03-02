@@ -34,6 +34,8 @@ class Board : AppCompatActivity() {
     private lateinit var editor : SharedPreferences.Editor
     var block_posts: String? = null
     var block_list =  ArrayList<Int>();
+    var comment_block_list =  ArrayList<Int>();
+    lateinit var blockcommentlists : String
 
     private lateinit var retrofit : Retrofit
     private lateinit var boardService: BoardService
@@ -81,8 +83,16 @@ class Board : AppCompatActivity() {
         val adRequest = AdRequest.Builder().build()
         binding.adView.loadAd(adRequest)
 
+        sharedPreferences = getSharedPreferences("commentBlockList", MODE_PRIVATE)
+        blockcommentlists = sharedPreferences.getString("id","").toString()
+        if(!blockcommentlists.isNullOrBlank()) {
+            comment_block_list =
+                Gson().fromJson(blockcommentlists, Array<Int>::class.java)
+                    .toMutableList() as ArrayList<Int>
+        }
+
         val user = intent.getSerializableExtra("user") as UserData
-        listAdapter = user?.let { CommentListAdapter(itemList, it) }!!
+        listAdapter = user?.let { CommentListAdapter(itemList, it, sharedPreferences, comment_block_list) }!!
         // 레이아웃 매니저와 어댑터 설정
         binding.commentlist.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.commentlist.adapter = listAdapter
@@ -226,6 +236,12 @@ class Board : AppCompatActivity() {
             }
         }
         binding.refresh.setOnRefreshListener {
+            blockcommentlists = sharedPreferences.getString("id","").toString()
+            if(!blockcommentlists.isNullOrBlank()) {
+                comment_block_list =
+                    Gson().fromJson(blockcommentlists, Array<Int>::class.java)
+                        .toMutableList() as ArrayList<Int>
+            }
             boardService.checkauthor(post_id!!, user_id,).enqueue(object : Callback<CheckAuthorData> {
                 override fun onResponse(
                     call: Call<CheckAuthorData>,
@@ -242,7 +258,9 @@ class Board : AppCompatActivity() {
                         binding.modify.visibility = View.GONE
                         binding.delete.visibility = View.GONE
                     }
+
                 }
+
                 override fun onFailure(call: Call<CheckAuthorData>, t: Throwable) {
                 }
             })
@@ -276,6 +294,15 @@ class Board : AppCompatActivity() {
                     for (i in commentData!!.comments!!) {
                         itemList.add(CommentData(i.id,i.content,i.updated_date,i.user))
                     }
+                    val delete = arrayListOf<CommentData>()
+                    for (i in itemList!!) {
+                        for (k in comment_block_list.distinct()) {
+                            if (i.id == k) {
+                                delete.add(i)
+                            }
+                        }
+                    }
+                    itemList.removeAll(delete)
 
                     Log.d("commentbb", commentData.toString())
                     binding.commentlist.layoutManager = LinearLayoutManager(this@Board, LinearLayoutManager.VERTICAL, false)
@@ -291,6 +318,12 @@ class Board : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        blockcommentlists = sharedPreferences.getString("id","").toString()
+        if(!blockcommentlists.isNullOrBlank()) {
+            comment_block_list =
+                Gson().fromJson(blockcommentlists, Array<Int>::class.java)
+                    .toMutableList() as ArrayList<Int>
+        }
         boardService.checkauthor(post_id!!, user_id,).enqueue(object : Callback<CheckAuthorData> {
             override fun onResponse(
                 call: Call<CheckAuthorData>,
@@ -341,6 +374,15 @@ class Board : AppCompatActivity() {
                 for (i in commentData!!.comments!!) {
                     itemList.add(CommentData(i.id,i.content,i.updated_date,i.user))
                 }
+                val delete = arrayListOf<CommentData>()
+                for (i in itemList!!) {
+                    for (k in comment_block_list.distinct()) {
+                        if (i.id == k) {
+                            delete.add(i)
+                        }
+                    }
+                }
+                itemList.removeAll(delete)
 
                 Log.d("commentbb", commentData.toString())
                 binding.commentlist.layoutManager = LinearLayoutManager(this@Board, LinearLayoutManager.VERTICAL, false)

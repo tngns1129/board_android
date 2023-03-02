@@ -1,6 +1,7 @@
 package com.semo.myapplication
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +13,7 @@ import com.semo.myapplication.databinding.ActivityPostListBinding
 
 class BoardListAdapter(
     val contents: ArrayList<BriefContentData>,
-    val user:UserData
+    val user:UserData,
 ) : RecyclerView.Adapter<BoardListAdapter.PostViewHolder>() {
 
     private lateinit var binding: ActivityPostListBinding

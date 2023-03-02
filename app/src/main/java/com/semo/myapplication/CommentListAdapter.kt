@@ -19,12 +19,14 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class CommentListAdapter (
     val contents: ArrayList<CommentData>,
-    val user:UserData
+    val user:UserData,
+    var sharedPreferences : SharedPreferences,
+    var block_list:ArrayList<Int>,
     ) : RecyclerView.Adapter<CommentListAdapter.CommentViewHolder>(){
 
     private lateinit var retrofit:Retrofit
     private lateinit var boardService: BoardService
-    var block_list =  ArrayList<Int>();
+    private lateinit var editor : SharedPreferences.Editor
 
     class CommentViewHolder(itemView: View):RecyclerView.ViewHolder(itemView) {
         var comment: TextView = itemView.findViewById(R.id.comment)
@@ -113,12 +115,25 @@ class CommentListAdapter (
                                     DialogInterface.OnClickListener { dialog, which ->
                                         // 여기서 인자 'which'는 배열의 position을 나타냅니다.
                                         if(which == 0) {
+                                            editor = sharedPreferences.edit()
                                             contents[position].id?.let { it1 -> block_list.add(it1) }
+                                            editor.putString("id", Gson().toJson(block_list))
+                                            editor.commit()
+                                            contents.removeAt(holder.bindingAdapterPosition)
                                         } else if(which ==1){
+                                            editor = sharedPreferences.edit()
                                             contents[position].id?.let { it1 -> block_list.add(it1) }
+                                            editor.putString("id", Gson().toJson(block_list))
+                                            editor.commit()
+                                            contents.removeAt(holder.bindingAdapterPosition)
                                         } else if(which ==2){
+                                            editor = sharedPreferences.edit()
                                             contents[position].id?.let { it1 -> block_list.add(it1) }
+                                            editor.putString("id", Gson().toJson(block_list))
+                                            editor.commit()
+                                            contents.removeAt(holder.bindingAdapterPosition)
                                         }
+                                        notifyDataSetChanged()
                                     })
                             builder.show()
                         } else if(which ==2){
