@@ -60,7 +60,7 @@ class Signin : AppCompatActivity() {
                 signinService.requestSignin(id, pw).enqueue(object : Callback<SigninData> {
                     override fun onFailure(call: Call<SigninData>, t: Throwable) {
                         t.message?.let { it1 -> Log.e("LOGIN", it1) }
-                        toast(resources.getString(R.string.server_adress))
+                        toast(resources.getString(R.string.serverfail))
                         binding.loginView.visibility = View.VISIBLE
                         binding.semo.visibility = View.GONE
                         binding.loading.visibility = View.GONE

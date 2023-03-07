@@ -151,7 +151,6 @@ class Board : AppCompatActivity() {
                     DialogInterface.OnClickListener { dialogInterface, i ->
                     })
             dialog.show()
-
         }
         binding.modify.setOnClickListener {
             val modifyIntent = Intent(this, Modify::class.java)
@@ -161,36 +160,51 @@ class Board : AppCompatActivity() {
             modifyIntent.putExtra("user_id", user_id)
             startActivity(modifyIntent)
         }
-        binding.report.setOnClickListener{
-            var colorArray: Array<String> = arrayOf(
-                resources.getString(R.string.report_list_1),
-                resources.getString(R.string.report_list_2),
-                resources.getString(R.string.report_list_3)) // 리스트에 들어갈 Array
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle(resources.getString(R.string.report))
-                .setItems(colorArray,
-                    DialogInterface.OnClickListener { dialog, which ->
-                        // 여기서 인자 'which'는 배열의 position을 나타냅니다.
-                        editor = sharedPreferences.edit()
-                        if(which == 0) {
-                            block_list.add(post_id!!)
-                            block_posts = Gson().toJson(block_list)
-                            editor.putString("post_id", block_posts)
-                            editor.commit()
-                        } else if(which ==1){
-                            block_list.add(post_id!!)
-                            block_posts = Gson().toJson(block_list)
-                            editor.putString("post_id", block_posts)
-                            editor.commit()
-                        } else if(which ==2){
-                            block_list.add(post_id!!)
-                            block_posts = Gson().toJson(block_list)
-                            editor.putString("post_id", block_posts)
-                            editor.commit()
-                        }
-                    })
-            // 다이얼로그를 띄워주기
-            builder.show()
+        binding.menu.setOnClickListener{
+            binding.menu.setOnClickListener{
+                var menuArray: Array<String> = arrayOf(
+                    //resources.getString(R.string.delete),
+                    resources.getString(R.string.report),
+                ) // 리스트에 들어갈 Array
+                var reportArray: Array<String> = arrayOf(
+                    resources.getString(R.string.report_list_1),
+                    resources.getString(R.string.report_list_2),
+                    resources.getString(R.string.report_list_3),
+                ) // 리스트에 들어갈 Array
+                val builder = AlertDialog.Builder(this)
+                    .setItems(menuArray,
+                        DialogInterface.OnClickListener { dialog, which ->
+                            // 여기서 인자 'which'는 배열의 position을 나타냅니다.
+                            if(which == 0) {    //댓글 삭제
+                                val builder = AlertDialog.Builder(this)
+                                    .setItems(reportArray,
+                                        DialogInterface.OnClickListener { dialog, which ->
+                                            // 여기서 인자 'which'는 배열의 position을 나타냅니다.
+                                            if(which == 0) {
+                                                block_list.add(post_id!!)
+                                                block_posts = Gson().toJson(block_list)
+                                                editor.putString("post_id", block_posts)
+                                                editor.commit()
+                                            } else if(which ==1){
+                                                block_list.add(post_id!!)
+                                                block_posts = Gson().toJson(block_list)
+                                                editor.putString("post_id", block_posts)
+                                                editor.commit()
+                                            } else if(which ==2){
+                                                block_list.add(post_id!!)
+                                                block_posts = Gson().toJson(block_list)
+                                                editor.putString("post_id", block_posts)
+                                                editor.commit()
+                                            }
+                                        })
+                                builder.show()
+                            } else if(which ==1){   //댓글 신고
+                            } else if(which ==2){
+                            }
+                        })
+                // 다이얼로그를 띄워주기
+                builder.show()
+            }
         }
         binding.confirm.setOnClickListener{
             var content:String = binding.conmment.text.toString()

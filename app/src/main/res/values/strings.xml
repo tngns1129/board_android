@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Board</string>
-    <string name="server_adress">http://13.231.147.7:8000</string>
+    <string name="server_adress">https://semo.monster/</string>
+    <string name="server_adress_inner">http://172.30.1.45:8000</string>
+    <string name="ad_post">ca-app-pub-6471197578074134/3295987809</string>
+    <string name="ad_post_list">ca-app-pub-6471197578074134/3144229978</string>
+    <string name="ad_test">ca-app-pub-3940256099942544/6300978111</string>
     <string name="auto_login_id"></string>
     <string name="auto_login_password"></string>
     <string name="id_rule">Please enter no more than 15 numbers or letters without spaces.</string>
@@ -40,4 +44,5 @@
     <string name="terms_use">https://sites.google.com/view/boardrodlswjdqh/%ED%99%88</string>
     <string name="delete_info">Are you sure you want to delete?</string>
     <string name="delete">delete</string>
+    <string name="reports">report</string>
 </resources>

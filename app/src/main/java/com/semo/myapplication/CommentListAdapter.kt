@@ -32,6 +32,7 @@ class CommentListAdapter (
         var comment: TextView = itemView.findViewById(R.id.comment)
         val author: TextView = itemView.findViewById(R.id.post_author)
         val date: TextView = itemView.findViewById(R.id.date)
+        val report: TextView = itemView.findViewById(R.id.report)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
@@ -75,18 +76,51 @@ class CommentListAdapter (
         holder.itemView.setOnClickListener {
 
         }
-        holder.itemView.setOnLongClickListener {
-            var colorArray: Array<String> = arrayOf(
-                holder.itemView.resources.getString(R.string.delete),
-                holder.itemView.resources.getString(R.string.report),
-            ) // 리스트에 들어갈 Array
+        holder.report.setOnClickListener {
             var colorsArray: Array<String> = arrayOf(
                 holder.itemView.resources.getString(R.string.report_list_1),
                 holder.itemView.resources.getString(R.string.report_list_2),
                 holder.itemView.resources.getString(R.string.report_list_3),
             ) // 리스트에 들어갈 Array
             val builder = AlertDialog.Builder(holder.itemView.context)
-                .setItems(colorArray,
+                .setItems(colorsArray,
+                    DialogInterface.OnClickListener { dialog, which ->
+                        // 여기서 인자 'which'는 배열의 position을 나타냅니다.
+                        if(which == 0) {
+                            editor = sharedPreferences.edit()
+                            contents[position].id?.let { it1 -> block_list.add(it1) }
+                            editor.putString("id", Gson().toJson(block_list))
+                            editor.commit()
+                            contents.removeAt(holder.bindingAdapterPosition)
+                        } else if(which ==1){
+                            editor = sharedPreferences.edit()
+                            contents[position].id?.let { it1 -> block_list.add(it1) }
+                            editor.putString("id", Gson().toJson(block_list))
+                            editor.commit()
+                            contents.removeAt(holder.bindingAdapterPosition)
+                        } else if(which ==2){
+                            editor = sharedPreferences.edit()
+                            contents[position].id?.let { it1 -> block_list.add(it1) }
+                            editor.putString("id", Gson().toJson(block_list))
+                            editor.commit()
+                            contents.removeAt(holder.bindingAdapterPosition)
+                        }
+                        notifyDataSetChanged()
+                    })
+            builder.show()
+        }
+        holder.itemView.setOnLongClickListener {
+            var menuArray: Array<String> = arrayOf(
+                holder.itemView.resources.getString(R.string.delete),
+                holder.itemView.resources.getString(R.string.report),
+            ) // 리스트에 들어갈 Array
+            var reportArray: Array<String> = arrayOf(
+                holder.itemView.resources.getString(R.string.report_list_1),
+                holder.itemView.resources.getString(R.string.report_list_2),
+                holder.itemView.resources.getString(R.string.report_list_3),
+            ) // 리스트에 들어갈 Array
+            val builder = AlertDialog.Builder(holder.itemView.context)
+                .setItems(menuArray,
                     DialogInterface.OnClickListener { dialog, which ->
                         // 여기서 인자 'which'는 배열의 position을 나타냅니다.
                         if(which == 0) {    //댓글 삭제
@@ -111,7 +145,7 @@ class CommentListAdapter (
 
                         } else if(which ==1){   //댓글 신고
                             val builder = AlertDialog.Builder(holder.itemView.context)
-                                .setItems(colorsArray,
+                                .setItems(reportArray,
                                     DialogInterface.OnClickListener { dialog, which ->
                                         // 여기서 인자 'which'는 배열의 position을 나타냅니다.
                                         if(which == 0) {

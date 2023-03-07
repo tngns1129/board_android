@@ -31,7 +31,7 @@
             android:textSize="23dp"></Button>
 
         <ImageButton
-            android:id="@+id/report"
+            android:id="@+id/menu"
             android:layout_width="40dp"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
@@ -39,7 +39,7 @@
             android:background="@drawable/transparent_button"
             android:padding="10dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/report"></ImageButton>
+            android:src="@drawable/dots"></ImageButton>
 
         <ImageButton
             android:id="@+id/modify"
@@ -66,12 +66,14 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
         android:id="@+id/adView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         ads:adSize="BANNER"
-        ads:adUnitId="ca-app-pub-6471197578074134/5841987020"></com.google.android.gms.ads.AdView>
+        ads:adUnitId="@string/ad_post">
+    </com.google.android.gms.ads.AdView>
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"

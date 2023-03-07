@@ -40,6 +40,15 @@
                     android:layout_height="0dp"
                     android:layout_weight="100">
                 </View>
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorSecondaryVariant"
+                    android:textSize="15dp"
+                    android:text="@string/reports"
+                    android:id="@+id/report"
+                    android:background="@drawable/transparent_button">
+                </Button>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">게시판</string>
-    <string name="server_adress">http://13.231.147.7:8000</string>
+    <string name="server_adress">https://semo.monster/</string>
+    <string name="server_adress_inner">http://172.30.1.45:8000</string>
+    <string name="ad_post">ca-app-pub-6471197578074134/3295987809</string>
+    <string name="ad_post_list">ca-app-pub-6471197578074134/3144229978</string>
+    <string name="ad_test">ca-app-pub-3940256099942544/6300978111</string>
     <string name="auto_login_id"></string>
     <string name="auto_login_password"></string>
     <string name="id_rule">15자리 이하 문자나 숫자만 공백없이 입력하세요</string>
@@ -23,6 +27,7 @@
     <string name="signup_check_rule">약관에 먼저 동의 하셔야합니다.</string>
     <string name="exist_id">이미 존재하는 아이디입니다.</string>
     <string name="report">신고하기, 차단</string>
+    <string name="reports">신고</string>
     <string name="report_list_1">불쾌감을 주는 콘텐츠</string>
     <string name="report_list_2">허위사실 유포</string>
     <string name="report_list_3">무단 광고/홍보</string>
