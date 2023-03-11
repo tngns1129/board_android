@@ -50,6 +50,7 @@ class Board : AppCompatActivity() {
     var deleteData:DeleteData? = null
 
     var title: String? = null
+    var briefTitle: String? = null
     var content: String? = null
     var user_id:String? = null
     var modyfiyDate:String? = null
@@ -68,6 +69,8 @@ class Board : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
 
         retrofit = Retrofit.Builder()
             .baseUrl(resources.getString(R.string.server_adress))
@@ -97,7 +100,7 @@ class Board : AppCompatActivity() {
         binding.commentlist.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.commentlist.adapter = listAdapter
         binding.content.movementMethod = ScrollingMovementMethod.getInstance()
-        title = intent.getStringExtra("title")
+        briefTitle = intent.getStringExtra("title")
 
         sharedPreferences = getSharedPreferences("postBlockList", MODE_PRIVATE)
         var blocklists = sharedPreferences.getString("post_id","")
@@ -113,6 +116,7 @@ class Board : AppCompatActivity() {
             }
             override fun onResponse(call: Call<ContentViewData>, response: Response<ContentViewData>) {
                 contentData = response.body()
+                title = contentData!!.content.title
                 binding.title.setText(contentData!!.content.title)
                 binding.content.setText(contentData!!.content.content)
                 content = contentData!!.content.content
@@ -208,21 +212,20 @@ class Board : AppCompatActivity() {
         }
         binding.confirm.setOnClickListener{
             var content:String = binding.conmment.text.toString()
-            val contentPattern = "^.{1,99}$"
+            val contentPattern = "^(\n*.+\n*){1,99}$"
+            var blank = content.replace("\\s+".toRegex(),"")
             var pattern = Pattern.compile(contentPattern)
             val contentMatcher = pattern.matcher(content)
-            if (contentMatcher.matches()) {
+            if (contentMatcher.matches() && blank != "") {
                 boardService.writecommentview(post_id!!, user_id, content)
                     .enqueue(object : Callback<CommentWriteData> {
                         override fun onFailure(call: Call<CommentWriteData>, t: Throwable) {
                             Log.d("writecomment", t.toString())
                         }
-
                         override fun onResponse(
                             call: Call<CommentWriteData>,
                             response: Response<CommentWriteData>
                         ) {
-
                             commentWriteData = response.body()
                             Log.d("writecomment", commentWriteData.toString())
                             //if(commentWriteData != null){
@@ -245,7 +248,7 @@ class Board : AppCompatActivity() {
                 val imm: InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
                 binding.commentlist.smoothScrollToPosition(itemList.size)
-            } else if(!contentMatcher.matches()){
+            } else if(!contentMatcher.matches() || blank == ""){
                 toast(resources.getString(R.string.contentlong))
             }
         }
@@ -328,6 +331,11 @@ class Board : AppCompatActivity() {
             binding.date.setText(modyfiyDate)
             binding.refresh.isRefreshing = false
         }
+
+        if(binding.author.text == "suhun"){
+            binding.test.setBackgroundResource(R.drawable.post_backgraound)
+        }
+
     }
 
     override fun onResume() {

@@ -58,13 +58,17 @@ class Modify: AppCompatActivity() {
         binding.confirm.setOnClickListener {
             title = binding.modifyTitle.text.toString()
             content = binding.modifyContent.text.toString()
-            val titlePattern = "^.{1,25}$"
+            val titlePattern = "^(\n*.+\n*){1,25}$"
             var pattern = Pattern.compile(titlePattern)
-            val contentPattern = "^.{1,99}$"
+            val contentPattern = "^(\n*.+\n*){1,99}$"
             var pattern2 = Pattern.compile(contentPattern)
+            var blankt = title!!.replace("\\s+".toRegex(),"")
+            blankt = blankt.replace("\n+".toRegex(),"")
+            var blankc = content!!.replace("\\s+".toRegex(),"")
+            blankc = blankc.replace("\n+".toRegex(),"")
             val titleMatcher = pattern.matcher(title)
             val contentMatcher = pattern2.matcher(content)
-            if (titleMatcher.matches() && contentMatcher.matches() ) {
+            if (titleMatcher.matches() && contentMatcher.matches() && blankt != "" && blankc != "") {
                 boardService.modify(post_id!!,user_id, title, content).enqueue(object :
                     Callback<ModifyData> {
                     override fun onResponse(call: Call<ModifyData>, response: Response<ModifyData>) {
@@ -90,9 +94,9 @@ class Modify: AppCompatActivity() {
                     override fun onFailure(call: Call<ModifyData>, t: Throwable) {
                     }
                 })
-            } else if(!titleMatcher.matches()){
+            } else if(!titleMatcher.matches() || blankt == ""){
                 toast(resources.getString(R.string.titlelong))
-            } else if(!contentMatcher.matches()){
+            } else if(!contentMatcher.matches() || blankc == ""){
                 toast(resources.getString(R.string.contentlong))
             }
 

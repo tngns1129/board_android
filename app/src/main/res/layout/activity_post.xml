@@ -77,11 +77,13 @@
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/refresh">
+    android:id="@+id/refresh"
+    >
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:id="@+id/test">
 
         <LinearLayout
             android:layout_width="match_parent"

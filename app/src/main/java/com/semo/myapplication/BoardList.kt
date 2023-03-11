@@ -63,6 +63,66 @@ class BoardList : AppCompatActivity() {
         shared_login = getSharedPreferences("loginInfo", MODE_PRIVATE)
         login_editor = shared_login.edit()
 
+        shared_block = getSharedPreferences("postBlockList", MODE_PRIVATE)
+        val blocklist = shared_block.getString("post_id","")
+        if(!blocklist.isNullOrBlank()) {
+            block_list =
+                Gson().fromJson(blocklist, Array<Int>::class.java)
+                    .toMutableList() as ArrayList<Int>
+        }else{
+            block_list.clear()
+        }
+        boardService.titleview().enqueue(object: Callback<BriefContentViewData> {
+            override fun onFailure(call: Call<BriefContentViewData>, t: Throwable) {
+                Log.d("boardsss",t.toString())
+            }
+
+            override fun onResponse(call: Call<BriefContentViewData>, response: Response<BriefContentViewData>) {
+                Log.d("boardsss","body : "+ response.body())
+                post = response.body()
+                itemList.clear()
+                var t:String
+                if(post?.code == "000") {
+                    for (i in post?.content!!) {
+                        if(i.title?.length!! >=10) {
+                            t = i.title!!.substring(0 until 10) + "..."
+                            itemList.add(
+                                BriefContentData(
+                                    t,
+                                    i.brief_description,
+                                    i.updated_date,
+                                    i.user,
+                                    i.id,
+                                    i.comment_count
+                                )
+                            )
+                        } else{
+                            itemList.add(
+                                BriefContentData(
+                                    i.title,
+                                    i.brief_description,
+                                    i.updated_date,
+                                    i.user,
+                                    i.id,
+                                    i.comment_count
+                                )
+                            )
+                        }
+                    }
+                    val delete = arrayListOf<BriefContentData>()
+                    for (i in itemList!!) {
+                        for (k in block_list.distinct()) {
+                            if (i.id == k) {
+                                delete.add(i)
+                            }
+                        }
+                    }
+                    itemList.removeAll(delete)
+                }
+                Log.d("block",block_list.toString())
+            }
+        })
+
         // 레이아웃 매니저와 어댑터 설정
         binding.postlist.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.postlist.adapter = listAdapter
@@ -118,7 +178,7 @@ class BoardList : AppCompatActivity() {
                     itemList.clear()
                     var t:String
                     if(post?.code == "000") {
-                        for (i in post?.content?.reversed()!!) {
+                        for (i in post?.content!!) {
                             if(i.title?.length!! >=10) {
                                 t = i.title!!.substring(0 until 10) + "..."
                                 itemList.add(
@@ -189,69 +249,6 @@ class BoardList : AppCompatActivity() {
         Log.d("ListResume", "Hi")
         super.onResume()
 
-        shared_block = getSharedPreferences("postBlockList", MODE_PRIVATE)
-        val blocklist = shared_block.getString("post_id","")
-        if(!blocklist.isNullOrBlank()) {
-            block_list =
-                Gson().fromJson(blocklist, Array<Int>::class.java)
-                    .toMutableList() as ArrayList<Int>
-        }else{
-            block_list.clear()
-        }
-
-        boardService.titleview().enqueue(object: Callback<BriefContentViewData> {
-            override fun onFailure(call: Call<BriefContentViewData>, t: Throwable) {
-                Log.d("boardsss",t.toString())
-            }
-
-            override fun onResponse(call: Call<BriefContentViewData>, response: Response<BriefContentViewData>) {
-                Log.d("boardsss","body : "+ response.body())
-                post = response.body()
-                itemList.clear()
-                var t:String
-                if(post?.code == "000") {
-                    for (i in post?.content?.reversed()!!) {
-                        if(i.title?.length!! >=10) {
-                            t = i.title!!.substring(0 until 10) + "..."
-                            itemList.add(
-                                BriefContentData(
-                                    t,
-                                    i.brief_description,
-                                    i.updated_date,
-                                    i.user,
-                                    i.id,
-                                    i.comment_count
-                                )
-                            )
-                        } else{
-                            itemList.add(
-                                BriefContentData(
-                                    i.title,
-                                    i.brief_description,
-                                    i.updated_date,
-                                    i.user,
-                                    i.id,
-                                    i.comment_count
-                                )
-                            )
-                        }
-                    }
-                    val delete = arrayListOf<BriefContentData>()
-                    for (i in itemList!!) {
-                        for (k in block_list.distinct()) {
-                            if (i.id == k) {
-                                delete.add(i)
-                            }
-                        }
-                    }
-                    itemList.removeAll(delete)
-                }
-
-
-                binding.postlist.layoutManager = LinearLayoutManager(this@BoardList, LinearLayoutManager.VERTICAL, false)
-                binding.postlist.adapter = listAdapter
-            }
-        })
     }
     var mBackWait:Long = 0
     override fun onBackPressed() {

@@ -37,8 +37,8 @@ class Signin : AppCompatActivity() {
         sharedPreferences = getSharedPreferences("loginInfo", MODE_PRIVATE)
         editor = sharedPreferences.edit()
 
-//        binding.userid.setText(sharedPreferences.getString("id",""))
-//        binding.userpassward.setText(sharedPreferences.getString("pw",""))
+        binding.userid.setText(sharedPreferences.getString("id",""))
+        binding.userpassward.setText(sharedPreferences.getString("pw",""))
 
         retrofit = Retrofit.Builder()
             .baseUrl(resources.getString(R.string.server_adress))

@@ -50,13 +50,17 @@ class Writing : AppCompatActivity () {
             Log.d("POST", "content :"+content)
             Log.d("POST", "uid :"+author)
 
-            val titlePattern = "^.{1,25}$"
+            val titlePattern = "^(\n*.+\n*){1,25}$"
             var pattern = Pattern.compile(titlePattern)
-            val contentPattern = "^.{1,99}$"
+            val contentPattern = "^(\n*.+\n*){1,99}$"
             var pattern2 = Pattern.compile(contentPattern)
+            var blankt = title!!.replace("\\s+".toRegex(),"")
+            blankt = blankt.replace("\n+".toRegex(),"")
+            var blankc = content!!.replace("\\s+".toRegex(),"")
+            blankc = blankc.replace("\n+".toRegex(),"")
             val titleMatcher = pattern.matcher(title)
             val contentMatcher = pattern2.matcher(content)
-            if (titleMatcher.matches() && contentMatcher.matches() ) {
+            if (titleMatcher.matches() && contentMatcher.matches() && blankt != "" && blankc != "") {
                 writingService.requestPost(title,content,author).enqueue(object: Callback<WritingData> {
                     override fun onFailure(call: Call<WritingData>, t: Throwable) {
                     }
@@ -69,9 +73,9 @@ class Writing : AppCompatActivity () {
                         }
                     }
                 })
-            } else if(!titleMatcher.matches()){
+            } else if(!titleMatcher.matches() || blankt == ""){
                 toast(resources.getString(R.string.titlelong))
-            } else if(!contentMatcher.matches()){
+            } else if(!contentMatcher.matches() || blankc == ""){
                 toast(resources.getString(R.string.contentlong))
             }
 
