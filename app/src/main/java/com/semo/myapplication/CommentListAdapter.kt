@@ -16,6 +16,11 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.collections.ArrayList
 
 class CommentListAdapter (
     val contents: ArrayList<CommentData>,
@@ -47,31 +52,19 @@ class CommentListAdapter (
     }
 
     override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
-        var d:String
-        var t:String
-        var date:String
         var deleteData:DeleteData? = null
 
-        if(contents[position].updated_date.toString().length>15) {
-            if (contents[position].updated_date.toString().substring(5 until 6)
-                    .equals("0")
-            ) // 월 10의자리
-                d = contents[position].updated_date.toString().substring(6 until 7)     //월 1자리 입력
-            else
-                d = contents[position].updated_date.toString().substring(5 until 7)     //월 2자리 입력
 
-            d = d + "/" + contents[position].updated_date.toString().substring(8 until 10)
-
-            Log.d("date", contents[position].updated_date.toString())
-
-            t = contents[position].updated_date.toString().substring(11 until 16)
-            date = d + " " + t
-        } else{
-            date = contents[position].updated_date.toString()
-        }
         holder.comment.text = contents[position].content
         holder.author.text = contents[position].user?.username
-        holder.date.text = date
+        val current = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("dd")
+        val formatted = current.format(formatter)
+        if(formatted == contents[position].updated_date?.toDate()?.formatTo("dd")){
+            holder.date.text = contents[position].updated_date?.toDate()?.formatTo("HH:mm")
+        } else{
+            holder.date.text = contents[position].updated_date?.toDate()?.formatTo("MM/dd")
+        }
 
         holder.itemView.setOnClickListener {
 
@@ -177,6 +170,17 @@ class CommentListAdapter (
             builder.show()
             return@setOnLongClickListener true
         }
+    }
+    fun String.toDate(dateFormat: String = "MM/dd HH:mm", timeZone: TimeZone = TimeZone.getDefault()): Date {
+        val parser = SimpleDateFormat(dateFormat, Locale.getDefault())
+        parser.timeZone = timeZone
+        return parser.parse(this)
+    }
+
+    fun Date.formatTo(dateFormat: String, timeZone: TimeZone = TimeZone.getDefault()): String {
+        val formatter = SimpleDateFormat(dateFormat, Locale.getDefault())
+        formatter.timeZone = timeZone
+        return formatter.format(this)
     }
     override fun getItemCount(): Int {
         return contents.size

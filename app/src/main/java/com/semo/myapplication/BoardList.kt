@@ -3,9 +3,11 @@ package com.semo.myapplication
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.ads.AdRequest
@@ -17,6 +19,10 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.collections.ArrayList
 
 class BoardList : AppCompatActivity() {
 
@@ -43,6 +49,7 @@ class BoardList : AppCompatActivity() {
     var title:String? = null
     var author:String? = null
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding = ActivityPostListBinding.inflate(layoutInflater)
@@ -72,6 +79,7 @@ class BoardList : AppCompatActivity() {
         }else{
             block_list.clear()
         }
+
         boardService.titleview().enqueue(object: Callback<BriefContentViewData> {
             override fun onFailure(call: Call<BriefContentViewData>, t: Throwable) {
                 Log.d("boardsss",t.toString())
@@ -84,13 +92,13 @@ class BoardList : AppCompatActivity() {
                 var t:String
                 if(post?.code == "000") {
                     for (i in post?.content!!) {
-                        if(i.title?.length!! >=10) {
-                            t = i.title!!.substring(0 until 10) + "..."
+                        if(i.title?.length!! >=25) {
+                            t = i.title!!.substring(0 until 25) + "..."
                             itemList.add(
                                 BriefContentData(
                                     t,
                                     i.brief_description,
-                                    i.updated_date,
+                                    i.updated_date?.toDate()?.formatTo("MM/dd HH:mm"),
                                     i.user,
                                     i.id,
                                     i.comment_count
@@ -101,7 +109,7 @@ class BoardList : AppCompatActivity() {
                                 BriefContentData(
                                     i.title,
                                     i.brief_description,
-                                    i.updated_date,
+                                    i.updated_date?.toDate()?.formatTo("MM/dd HH:mm"),
                                     i.user,
                                     i.id,
                                     i.comment_count
@@ -179,13 +187,13 @@ class BoardList : AppCompatActivity() {
                     var t:String
                     if(post?.code == "000") {
                         for (i in post?.content!!) {
-                            if(i.title?.length!! >=10) {
-                                t = i.title!!.substring(0 until 10) + "..."
+                            if(i.title?.length!! >=25) {
+                                t = i.title!!.substring(0 until 25) + "..."
                                 itemList.add(
                                     BriefContentData(
                                         t,
                                         i.brief_description,
-                                        i.updated_date,
+                                        i.updated_date?.toDate()?.formatTo("MM/dd HH:mm"),
                                         i.user,
                                         i.id,
                                         i.comment_count
@@ -196,7 +204,7 @@ class BoardList : AppCompatActivity() {
                                     BriefContentData(
                                         i.title,
                                         i.brief_description,
-                                        i.updated_date,
+                                        i.updated_date?.toDate()?.formatTo("MM/dd HH:mm"),
                                         i.user,
                                         i.id,
                                         i.comment_count
@@ -265,5 +273,18 @@ class BoardList : AppCompatActivity() {
         mBinding = null
         super.onDestroy()
     }
+    fun String.toDate(dateFormat: String = "yyyy-MM-dd'T'HH:mm:ss", timeZone: TimeZone = TimeZone.getTimeZone("UTC")): Date {
+        val parser = SimpleDateFormat(dateFormat, Locale.getDefault())
+        parser.timeZone = timeZone
+        return parser.parse(this)
+    }
+
+    fun Date.formatTo(dateFormat: String, timeZone: TimeZone = TimeZone.getDefault()): String {
+        val formatter = SimpleDateFormat(dateFormat, Locale.getDefault())
+        formatter.timeZone = timeZone
+        return formatter.format(this)
+    }
 
 }
+
+

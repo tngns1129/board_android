@@ -1,5 +1,7 @@
 package com.semo.myapplication
 
+import java.util.Date
+
 data class BriefContentData(
     var title: String?,
     var brief_description: String?,

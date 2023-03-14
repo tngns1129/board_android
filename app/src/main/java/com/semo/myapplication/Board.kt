@@ -26,7 +26,10 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.regex.Pattern
+import kotlin.collections.ArrayList
 
 class Board : AppCompatActivity() {
 
@@ -309,7 +312,11 @@ class Board : AppCompatActivity() {
                     commentData = response.body()
                     itemList.clear()
                     for (i in commentData!!.comments!!) {
-                        itemList.add(CommentData(i.id,i.content,i.updated_date,i.user))
+                        itemList.add(CommentData(
+                            i.id,
+                            i.content,
+                            i.updated_date?.toDate()?.formatTo("MM/dd HH:mm"),
+                            i.user))
                     }
                     val delete = arrayListOf<CommentData>()
                     for (i in itemList!!) {
@@ -335,7 +342,6 @@ class Board : AppCompatActivity() {
         if(binding.author.text == "suhun"){
             binding.test.setBackgroundResource(R.drawable.post_backgraound)
         }
-
     }
 
     override fun onResume() {
@@ -394,7 +400,11 @@ class Board : AppCompatActivity() {
                 commentData = response.body()
                 itemList.clear()
                 for (i in commentData!!.comments!!) {
-                    itemList.add(CommentData(i.id,i.content,i.updated_date,i.user))
+                    itemList.add(CommentData(
+                        i.id,
+                        i.content,
+                        i.updated_date?.toDate()?.formatTo("MM/dd HH:mm"),
+                        i.user))
                 }
                 val delete = arrayListOf<CommentData>()
                 for (i in itemList!!) {
@@ -450,6 +460,17 @@ class Board : AppCompatActivity() {
             binding.content.text = content
             binding.date.text = date
         }
+    }
+    fun String.toDate(dateFormat: String = "yyyy-MM-dd'T'HH:mm:ss", timeZone: TimeZone = TimeZone.getTimeZone("UTC")): Date {
+        val parser = SimpleDateFormat(dateFormat, Locale.getDefault())
+        parser.timeZone = timeZone
+        return parser.parse(this)
+    }
+
+    fun Date.formatTo(dateFormat: String, timeZone: TimeZone = TimeZone.getDefault()): String {
+        val formatter = SimpleDateFormat(dateFormat, Locale.getDefault())
+        formatter.timeZone = timeZone
+        return formatter.format(this)
     }
 
 }
