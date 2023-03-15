@@ -19,13 +19,12 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".Signup"></activity>
         <activity android:name=".Board"
-            android:windowSoftInputMode="adjustResize"></activity>
+            android:windowSoftInputMode="adjustPan"></activity>
         <activity android:name=".Writing"></activity>
         <activity android:name=".Modify"></activity>
         <activity

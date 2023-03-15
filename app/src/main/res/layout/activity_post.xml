@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -74,16 +75,6 @@
         ads:adSize="BANNER"
         ads:adUnitId="@string/ad_post">
     </com.google.android.gms.ads.AdView>
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/refresh"
-    >
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:id="@+id/test">
 
 
             <LinearLayout
@@ -103,10 +94,8 @@
                     android:textSize="27dp"
                     android:layout_weight="10"
                     android:layout_marginBottom="15dp"></TextView>
-
-
-
             </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -128,8 +117,6 @@
                 android:textColor="?attr/colorSecondaryVariant"
                 android:textSize="15dp"
                 android:layout_marginRight="10dp"></TextView>
-
-
             <TextView
                 android:id="@+id/date"
                 android:layout_width="wrap_content"
@@ -140,52 +127,70 @@
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:weightSum="10">
+            android:layout_height="wrap_content"
+            android:layout_weight="0">
             <TextView
                 android:id="@+id/content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="20dp"
-                android:padding="5dp"
-                android:text="content"
+                android:maxHeight="350dp"
+                android:layout_marginTop="5dp"
+                android:padding="30dp"
+                android:scrollbars="vertical"
+                android:text="contentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontent"
                 android:textColor="?attr/colorSecondaryVariant"
-                android:textSize="18dp"></TextView>
+                android:textSize="18dp"
+                ></TextView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="10"
+            android:weightSum="10">
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/refresh"
+                android:layout_weight="10"
+                >
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/commentlist"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="9.9"
                 tools:listitem="@layout/view_comment_list">
 
             </androidx.recyclerview.widget.RecyclerView>
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:orientation="horizontal"
-                android:weightSum="10">
-
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_weight="0"
+                android:weightSum="1">
                 <EditText
                     android:id="@+id/conmment"
                     android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:layout_weight="9.9"></EditText>
-
+                    android:layout_height="wrap_content"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintRight_toLeftOf="@+id/confirm"
+                    android:layout_weight="1"></EditText>
                 <Button
                     android:id="@+id/confirm"
                     android:layout_width="wrap_content"
-                    android:layout_height="50dp"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="right"
-                    android:text="@string/confirm"></Button>
+                    android:text="@string/confirm"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@+id/conmment"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintHorizontal_bias="1"
+                    ></Button>
             </LinearLayout>
-
-        </LinearLayout>
-    </LinearLayout>
-</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </LinearLayout>

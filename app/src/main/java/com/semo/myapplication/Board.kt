@@ -237,7 +237,7 @@ class Board : AppCompatActivity() {
                                     CommentData(
                                         commentWriteData!!.comment?.id,
                                         commentWriteData!!.comment?.content,
-                                        commentWriteData!!.comment?.updated_date,
+                                        commentWriteData!!.comment?.updated_date?.toDate()?.formatTo("MM/dd HH:mm"),
                                         commentWriteData!!.comment?.user,
                                     )
                                 )
@@ -337,10 +337,6 @@ class Board : AppCompatActivity() {
             binding.title.setText(title)
             binding.date.setText(modyfiyDate)
             binding.refresh.isRefreshing = false
-        }
-
-        if(binding.author.text == "suhun"){
-            binding.test.setBackgroundResource(R.drawable.post_backgraound)
         }
     }
 

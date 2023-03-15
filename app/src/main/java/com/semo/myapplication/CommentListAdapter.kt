@@ -2,12 +2,14 @@ package com.semo.myapplication
 
 import android.content.DialogInterface
 import android.content.SharedPreferences
+import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
@@ -51,7 +53,9 @@ class CommentListAdapter (
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
+        var date:String
         var deleteData:DeleteData? = null
 
 
