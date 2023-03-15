@@ -24,7 +24,7 @@
         </activity>
         <activity android:name=".Signup"></activity>
         <activity android:name=".Board"
-            android:windowSoftInputMode="adjustPan"></activity>
+            android:windowSoftInputMode="adjustResize"></activity>
         <activity android:name=".Writing"></activity>
         <activity android:name=".Modify"></activity>
         <activity

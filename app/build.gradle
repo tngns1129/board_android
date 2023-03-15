@@ -14,8 +14,8 @@ android {
         applicationId "com.semo.myapplication"
         minSdk 24
         targetSdk 32
-        versionCode 48
-        versionName "1.7.29"
+        versionCode 49
+        versionName "1.7.30"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
