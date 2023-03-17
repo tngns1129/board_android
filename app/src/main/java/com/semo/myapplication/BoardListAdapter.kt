@@ -57,13 +57,10 @@ class BoardListAdapter(
 
         holder.itemView.setOnClickListener(){
             val intent = Intent(holder.itemView?.context, Board::class.java)
-            intent.putExtra("title", contents[position].title)
-            intent.putExtra("brief_description", contents[position].brief_description)
             intent.putExtra("updated_date", contents[position].updated_date)
             intent.putExtra("author", contents[position].user?.username)
             intent.putExtra("post_id", contents[position].id)
             intent.putExtra("user_id",user.id)
-            intent.putExtra("user", user)
             ContextCompat.startActivities(holder.itemView.context, arrayOf(intent), null)
         }
 

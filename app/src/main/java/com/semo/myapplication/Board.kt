@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.size
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.ads.AdRequest
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
 import com.semo.myapplication.databinding.ActivityPostBinding
 import retrofit2.Call
@@ -64,7 +65,7 @@ class Board : AppCompatActivity() {
     var commentData:CommentViewData?=null
     var commentWriteData:CommentWriteData?=null
 
-
+    var ispush:Int?=0
 
     val itemList = arrayListOf<CommentData>()      // 아이템 배열
     // 어댑터
@@ -72,14 +73,13 @@ class Board : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
-
         retrofit = Retrofit.Builder()
             .baseUrl(resources.getString(R.string.server_adress))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         boardService= retrofit.create(BoardService::class.java)
+
+        ispush = 0
 
         mBinding = ActivityPostBinding.inflate(layoutInflater)
         // getRoot 메서드로 레이아웃 내부의 최상위 위치 뷰의
@@ -97,13 +97,11 @@ class Board : AppCompatActivity() {
                     .toMutableList() as ArrayList<Int>
         }
 
-        val user = intent.getSerializableExtra("user") as UserData
-        listAdapter = user?.let { CommentListAdapter(itemList, it, sharedPreferences, comment_block_list) }!!
+        listAdapter = CommentListAdapter(itemList, sharedPreferences, comment_block_list) !!
         // 레이아웃 매니저와 어댑터 설정
         binding.commentlist.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.commentlist.adapter = listAdapter
         binding.content.movementMethod = ScrollingMovementMethod.getInstance()
-        briefTitle = intent.getStringExtra("title")
 
         sharedPreferences = getSharedPreferences("postBlockList", MODE_PRIVATE)
         var blocklists = sharedPreferences.getString("post_id","")
@@ -114,7 +112,15 @@ class Board : AppCompatActivity() {
         }
 
         //binding.title.setText(title)
-        boardService.contentview(intent.getIntExtra("post_id",-1)).enqueue(object: Callback<ContentViewData> {
+        post_id = intent.getIntExtra("post_id",0)
+        author = intent.getStringExtra("author")
+        modyfiyDate = intent.getStringExtra("updated_date")
+        user_id = intent.getStringExtra("user_id").toString()
+        initDynamicLink()
+
+        Log.d("dynamic postid", post_id.toString())
+
+        boardService.contentview(post_id).enqueue(object: Callback<ContentViewData> {
             override fun onFailure(call: Call<ContentViewData>, t: Throwable) {
             }
             override fun onResponse(call: Call<ContentViewData>, response: Response<ContentViewData>) {
@@ -125,12 +131,11 @@ class Board : AppCompatActivity() {
                 content = contentData!!.content.content
             }
         })
-        author = intent.getStringExtra("author")
-        modyfiyDate = intent.getStringExtra("updated_date")
+
         binding.author.setText(author)
         binding.date.setText(modyfiyDate)
-        post_id = intent.getIntExtra("post_id",0)
-        user_id = intent.getStringExtra("user_id")
+
+
 
         binding.delete.setOnClickListener {
             Log.d("delete",post_id.toString())
@@ -284,7 +289,7 @@ class Board : AppCompatActivity() {
                 override fun onFailure(call: Call<CheckAuthorData>, t: Throwable) {
                 }
             })
-            boardService.contentview(intent.getIntExtra("post_id", -1))
+            boardService.contentview(post_id)
                 .enqueue(object : Callback<ContentViewData> {
                     override fun onFailure(call: Call<ContentViewData>, t: Throwable) {
                     }
@@ -348,6 +353,7 @@ class Board : AppCompatActivity() {
                 Gson().fromJson(blockcommentlists, Array<Int>::class.java)
                     .toMutableList() as ArrayList<Int>
         }
+        Log.d("checkauthor", post_id.toString() + user_id.toString())
         boardService.checkauthor(post_id!!, user_id,).enqueue(object : Callback<CheckAuthorData> {
             override fun onResponse(
                 call: Call<CheckAuthorData>,
@@ -368,7 +374,7 @@ class Board : AppCompatActivity() {
             override fun onFailure(call: Call<CheckAuthorData>, t: Throwable) {
             }
         })
-        boardService.contentview(intent.getIntExtra("post_id", -1))
+        boardService.contentview(post_id)
             .enqueue(object : Callback<ContentViewData> {
                 override fun onFailure(call: Call<ContentViewData>, t: Throwable) {
                 }
@@ -463,10 +469,44 @@ class Board : AppCompatActivity() {
         return parser.parse(this)
     }
 
+    fun String.toDates(dateFormat: String = "yyyy-MM-dd HH:mm:ss+00:00", timeZone: TimeZone = TimeZone.getTimeZone("UTC")): Date {
+        val parser = SimpleDateFormat(dateFormat, Locale.getDefault())
+        parser.timeZone = timeZone
+        return parser.parse(this)
+    }
+
     fun Date.formatTo(dateFormat: String, timeZone: TimeZone = TimeZone.getDefault()): String {
         val formatter = SimpleDateFormat(dateFormat, Locale.getDefault())
         formatter.timeZone = timeZone
         return formatter.format(this)
     }
 
+    /** DynamicLink */
+    private fun initDynamicLink() {
+        val dynamicLinkData = intent.extras
+        if (dynamicLinkData != null) {
+            var dataStr = "DynamicLink 수신받은 값 (board)\n"
+            for (key in dynamicLinkData.keySet()) {
+                dataStr += "key: $key / value: ${dynamicLinkData.getString(key)}\n"
+            }
+            Log.d("fcmtokendynamic",dataStr)
+            if(dynamicLinkData.getString("value") == "1"){
+                post_id = dynamicLinkData.getString("post_id")!!.toInt()
+                Log.d("dynamicLinDatapostid", dynamicLinkData.getString("post_id")!!)
+                author = dynamicLinkData.getString("author")
+                modyfiyDate = dynamicLinkData.getString("modyfiyDate")!!.toDates()?.formatTo("MM/dd HH:mm")
+                user_id = dynamicLinkData.getString("user_id")
+                ispush = 1
+            }
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d("sssssss",ispush.toString())
+        if(ispush == 1){
+            val signipIntent = Intent(this, Signin::class.java)
+            startActivity(signipIntent)
+        }
+    }
 }

@@ -26,7 +26,6 @@ import kotlin.collections.ArrayList
 
 class CommentListAdapter (
     val contents: ArrayList<CommentData>,
-    val user:UserData,
     var sharedPreferences : SharedPreferences,
     var block_list:ArrayList<Int>,
     ) : RecyclerView.Adapter<CommentListAdapter.CommentViewHolder>(){

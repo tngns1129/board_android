@@ -34,6 +34,14 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+        <!-- FCM service 추가 -->
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
         <!-- Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713 -->
         <!-- My AdMob app ID: ca-app-pub-6471197578074134~9367697867 -->
         <meta-data

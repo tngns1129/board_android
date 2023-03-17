@@ -10,6 +10,7 @@ interface SigninService {
     @POST("/signin/")
     fun requestSignin(
         @Field("username") userid:String,
-        @Field("password") userpw:String
+        @Field("password") userpw:String,
+        @Field("token") token:String,
     ) : Call<SigninData>
 }

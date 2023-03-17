@@ -18,6 +18,7 @@ import java.util.regex.Pattern
 class Signin : AppCompatActivity() {
 
     private lateinit var sharedPreferences : SharedPreferences
+    private lateinit var sharedPreferencesToken : SharedPreferences
     private lateinit var editor : SharedPreferences.Editor
 
     private lateinit var retrofit:Retrofit
@@ -35,6 +36,7 @@ class Signin : AppCompatActivity() {
         setContentView(binding.root)
 
         sharedPreferences = getSharedPreferences("loginInfo", MODE_PRIVATE)
+        sharedPreferencesToken = getSharedPreferences("token", MODE_PRIVATE)
         editor = sharedPreferences.edit()
 
         binding.userid.setText(sharedPreferences.getString("id",""))
@@ -54,55 +56,61 @@ class Signin : AppCompatActivity() {
 
         var id = sharedPreferences.getString("id","")
         var pw = sharedPreferences.getString("pw","")
+        var token = sharedPreferencesToken.getString("token","")
+        if (token != null) {
+            Log.d("token ::", token)
+        }
 
         if (id != null) {
             if (pw != null) {
-                signinService.requestSignin(id, pw).enqueue(object : Callback<SigninData> {
-                    override fun onFailure(call: Call<SigninData>, t: Throwable) {
-                        t.message?.let { it1 -> Log.e("LOGIN", it1) }
-                        toast(resources.getString(R.string.serverfail))
-                        binding.loginView.visibility = View.VISIBLE
-                        binding.semo.visibility = View.GONE
-                        binding.loading.visibility = View.GONE
-                    }
+                if (token != null) {
+                    signinService.requestSignin(id, pw, token).enqueue(object : Callback<SigninData> {
+                        override fun onFailure(call: Call<SigninData>, t: Throwable) {
+                            t.message?.let { it1 -> Log.e("LOGIN", it1) }
+                            toast(resources.getString(R.string.serverfail))
+                            binding.loginView.visibility = View.VISIBLE
+                            binding.semo.visibility = View.GONE
+                            binding.loading.visibility = View.GONE
+                        }
 
-                    override fun onResponse(
-                        call: Call<SigninData>,
-                        response: Response<SigninData>
-                    ) {
-                        signin = response.body()
-                        Log.d("SIGNINnn", "response : \n" + signin)
-                        when (signin?.code) {
-                            "000" -> { //성공
-                                toast(resources.getString(R.string.autologin))
-                                val user = UserData(signin!!.user.id, id)
-                                mainIntent.putExtra("user", user)
-                                startActivity(mainIntent)
-                                finish()
-                            }
-                            "001" -> { //id 불일치
-                                toast(resources.getString(R.string.autologinfail)+"\n"+resources.getString(R.string.checkid))
-                                mBinding!!.userid.setText("")
-                                mBinding!!.userpassward.setText("")
-                                binding.loginView.visibility = View.VISIBLE
-                                binding.semo.visibility = View.GONE
-                                binding.loading.visibility = View.GONE
-                            }
-                            "002" -> { //pw 불일치
-                                toast(resources.getString(R.string.autologinfail)+"\n"+resources.getString(R.string.checkpw))
-                                mBinding!!.userpassward.setText("")
-                                binding.loginView.visibility = View.VISIBLE
-                                binding.semo.visibility = View.GONE
-                                binding.loading.visibility = View.GONE
-                            }
-                            else -> {
-                                binding.loginView.visibility = View.VISIBLE
-                                binding.semo.visibility = View.GONE
-                                binding.loading.visibility = View.GONE
+                        override fun onResponse(
+                            call: Call<SigninData>,
+                            response: Response<SigninData>
+                        ) {
+                            signin = response.body()
+                            Log.d("SIGNINnn", "response : \n" + signin)
+                            when (signin?.code) {
+                                "000" -> { //성공
+                                    toast(resources.getString(R.string.autologin))
+                                    val user = UserData(signin!!.user.id, id)
+                                    mainIntent.putExtra("user", user)
+                                    startActivity(mainIntent)
+                                    finish()
+                                }
+                                "001" -> { //id 불일치
+                                    toast(resources.getString(R.string.autologinfail)+"\n"+resources.getString(R.string.checkid))
+                                    mBinding!!.userid.setText("")
+                                    mBinding!!.userpassward.setText("")
+                                    binding.loginView.visibility = View.VISIBLE
+                                    binding.semo.visibility = View.GONE
+                                    binding.loading.visibility = View.GONE
+                                }
+                                "002" -> { //pw 불일치
+                                    toast(resources.getString(R.string.autologinfail)+"\n"+resources.getString(R.string.checkpw))
+                                    mBinding!!.userpassward.setText("")
+                                    binding.loginView.visibility = View.VISIBLE
+                                    binding.semo.visibility = View.GONE
+                                    binding.loading.visibility = View.GONE
+                                }
+                                else -> {
+                                    binding.loginView.visibility = View.VISIBLE
+                                    binding.semo.visibility = View.GONE
+                                    binding.loading.visibility = View.GONE
+                                }
                             }
                         }
-                    }
-                })
+                    })
+                }
             }
         }
 
@@ -119,6 +127,7 @@ class Signin : AppCompatActivity() {
 
             var id = mBinding!!.userid.text.toString()
             var pw = mBinding!!.userpassward.text.toString()
+            var token = sharedPreferencesToken.getString("token","")
 
             val idPattern = "^[A-Za-z0-9]{1,15}+$"
             val pwPattern = "^[A-Za-z0-9]{1,15}+$"
@@ -129,40 +138,45 @@ class Signin : AppCompatActivity() {
             val pwMatcher = pattern.matcher(pw)
 
             if(idMatcher.matches() && pwMatcher.matches()) {
-                signinService.requestSignin(id, pw).enqueue(object : Callback<SigninData> {
-                    override fun onFailure(call: Call<SigninData>, t: Throwable) {
-                        t.message?.let { it1 -> Log.e("LOGIN", it1) }
-                        toast(resources.getString(R.string.serverfail))
-                    }
-                    override fun onResponse(
-                        call: Call<SigninData>,
-                        response: Response<SigninData>
-                    ) {
-                        signin = response.body()
-                        Log.d("SIGNINnn", "response : \n" + signin)
-                        when (signin?.code) {
-                            "000" -> { //성공
-                                toast(resources.getString(R.string.loginsuccess))
-                                editor.putString("id", mBinding!!.userid.text.toString())
-                                editor.putString("pw", mBinding!!.userpassward.text.toString())
-                                editor.commit()
-                                val user = UserData(signin!!.user.id, id)
-                                mainIntent.putExtra("user", user)
-                                startActivity(mainIntent)
-                                finish()
-                            }
-                            "001" -> { //id 불일치
-                                toast(resources.getString(R.string.checkid))
-                                mBinding!!.userid.setText("")
-                                mBinding!!.userpassward.setText("")
-                            }
-                            "002" -> { //pw 불일치
-                                toast(resources.getString(R.string.checkpw))
-                                mBinding!!.userpassward.setText("")
+                if (token != null) {
+                    signinService.requestSignin(id, pw, token).enqueue(object : Callback<SigninData> {
+                        override fun onFailure(call: Call<SigninData>, t: Throwable) {
+                            t.message?.let { it1 -> Log.e("LOGIN", it1) }
+                            toast(resources.getString(R.string.serverfail))
+                        }
+
+                        override fun onResponse(
+                            call: Call<SigninData>,
+                            response: Response<SigninData>
+                        ) {
+                            signin = response.body()
+                            Log.d("SIGNINnn", "response : \n" + signin)
+                            when (signin?.code) {
+                                "000" -> { //성공
+                                    toast(resources.getString(R.string.loginsuccess))
+                                    editor.putString("id", mBinding!!.userid.text.toString())
+                                    editor.putString("pw", mBinding!!.userpassward.text.toString())
+                                    editor.commit()
+                                    val user = UserData(signin!!.user.id, id)
+                                    mainIntent.putExtra("user", user)
+                                    startActivity(mainIntent)
+                                    finish()
+                                }
+                                "001" -> { //id 불일치
+                                    toast(resources.getString(R.string.checkid))
+                                    mBinding!!.userid.setText("")
+                                    mBinding!!.userpassward.setText("")
+                                }
+                                "002" -> { //pw 불일치
+                                    toast(resources.getString(R.string.checkpw))
+                                    mBinding!!.userpassward.setText("")
+                                }
                             }
                         }
-                    }
-                })
+                    })
+                } else {
+                    Log.d("FirebaseService","token is null")
+                }
             }else if(!idMatcher.matches() && pwMatcher.matches()){
                 binding.idRule.visibility = View.VISIBLE
             } else if(idMatcher.matches() && !pwMatcher.matches()){
@@ -176,10 +190,29 @@ class Signin : AppCompatActivity() {
     }
 
     override fun onResume() {
+        /** FCM설정, Token값 가져오기 */
+        MyFirebaseMessagingService().getFirebaseToken()
+
+        /** DynamicLink 수신확인 */
+        initDynamicLink()
         super.onResume()
     }
 
     fun toast(message:String){
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+    /** DynamicLink */
+    private fun initDynamicLink() {
+        val dynamicLinkData = intent.extras
+        if (dynamicLinkData != null) {
+            var dataStr = "DynamicLink 수신받은 값\n"
+            for (key in dynamicLinkData.keySet()) {
+                dataStr += "key: $key / value: ${dynamicLinkData.getString(key)}\n"
+            }
+            Log.d("fcmtokendynamic",dataStr)
+            if(dynamicLinkData.getString("post_id") != null){
+
+            }
+        }
     }
 }

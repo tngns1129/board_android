@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "766818295264",
+    "project_id": "semo-board",
+    "storage_bucket": "semo-board.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:766818295264:android:18be690bed4e5497cb1f85",
+        "android_client_info": {
+          "package_name": "com.semo.myapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "766818295264-42nu7jgerkuulavlaar9k74hiv4jbs8m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.semo.myapplication",
+            "certificate_hash": "8fd379845fb29e0a88e83379c952dfde65ea0a40"
+          }
+        },
+        {
+          "client_id": "766818295264-dktflcim9haq1kkdqflgfl10v9kpdjmn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxmNstb_2yvZyt_ywa3Idz-qO1Xp_dYmM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "766818295264-dktflcim9haq1kkdqflgfl10v9kpdjmn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
