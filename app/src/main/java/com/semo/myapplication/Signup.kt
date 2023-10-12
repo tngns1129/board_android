@@ -2,8 +2,6 @@ package com.semo.myapplication
 
 import android.os.Build
 import android.os.Bundle
-import android.os.PatternMatcher
-import android.text.Spannable
 import android.text.util.Linkify
 import android.util.Log
 import android.view.View
@@ -16,7 +14,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 class Signup : AppCompatActivity() {
@@ -28,7 +25,7 @@ class Signup : AppCompatActivity() {
     var signup:SignupData? = null
 
     private lateinit var retrofit:Retrofit
-    private lateinit var signupService: SignupService
+    private lateinit var signupService: SignService
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +46,7 @@ class Signup : AppCompatActivity() {
             .baseUrl(resources.getString(R.string.server_adress))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-        signupService = retrofit.create(SignupService::class.java)
+        signupService = retrofit.create(SignService::class.java)
 
         var uid : String
         var id : String? = null

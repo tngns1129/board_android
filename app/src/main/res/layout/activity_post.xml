@@ -138,7 +138,7 @@
                 android:paddingRight="20dp"
                 android:paddingTop="10dp"
                 android:scrollbars="vertical"
-                android:text="contentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontent"
+                android:text="content"
                 android:textColor="?attr/colorSecondaryVariant"
                 android:textSize="15dp"
                 android:background="@drawable/post_list"
@@ -167,7 +167,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
                 <EditText
-                    android:id="@+id/conmment"
+                    android:id="@+id/comment_edit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

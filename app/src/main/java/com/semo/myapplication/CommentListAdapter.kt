@@ -7,12 +7,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
+import com.semo.myapplication.databinding.ActivityPostBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -24,10 +26,11 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
 
-class CommentListAdapter (
+class CommentListAdapter(
     val contents: ArrayList<CommentData>,
-    var sharedPreferences : SharedPreferences,
-    var block_list:ArrayList<Int>,
+    var sharedPreferences: SharedPreferences,
+    var block_list: ArrayList<Int>,
+    var binding: ActivityPostBinding
     ) : RecyclerView.Adapter<CommentListAdapter.CommentViewHolder>(){
 
     private lateinit var retrofit:Retrofit
@@ -70,7 +73,7 @@ class CommentListAdapter (
         }
 
         holder.itemView.setOnClickListener {
-
+            binding.commentEdit.setText(contents[position].user?.username + " ")
         }
         holder.report.setOnClickListener {
             var colorsArray: Array<String> = arrayOf(

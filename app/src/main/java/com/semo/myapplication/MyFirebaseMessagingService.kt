@@ -36,9 +36,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         Log.d(TAG, "From: " + remoteMessage!!.from)
 
-        // Notification 메시지를 수신할 경우
-        // remoteMessage.notification?.body!! 여기에 내용이 저장되있음
-        // Log.d(TAG, "Notification Message Body: " + remoteMessage.notification?.body!!)
+        //Notification 메시지를 수신할 경우
+        remoteMessage.notification?.body!! //여기에 내용이 저장되있음
+        Log.d(TAG, "Notification Message Title: " + remoteMessage.notification?.title!!)
+        Log.d(TAG, "Notification Message Body: " + remoteMessage.notification?.body!!)
 
         //받은 remoteMessage의 값 출력해보기. 데이터메세지 / 알림메세지
         Log.d(TAG, "Message data : ${remoteMessage.data}")
@@ -61,24 +62,15 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         // 일회용 PendingIntent : Intent 의 실행 권한을 외부의 어플리케이션에게 위임
         val intent = Intent(this, Signin::class.java)
-        val intent1 = Intent(this, Board::class.java)
+        for(key in remoteMessage.data.keys){
+            intent.putExtra(key, remoteMessage.data.getValue(key))
+        }
         //각 key, value 추가
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP) // Activity Stack 을 경로만 남김(A-B-C-D-B => A-B)
         //val pendingIntent = PendingIntent.getActivity(this, uniId, intent, PendingIntent.FLAG_ONE_SHOT)
         var pendingIntent = PendingIntent.getActivity(this, uniId, /* Request code */ intent, PendingIntent.FLAG_IMMUTABLE)
-
-        if(remoteMessage.data.getValue("value") == "1"){ //board로 바로 접근
-            for(key in remoteMessage.data.keys){
-                intent1.putExtra(key, remoteMessage.data.getValue(key))
-            }
-            pendingIntent = PendingIntent.getActivity(this, uniId, /* Request code */ intent1, PendingIntent.FLAG_MUTABLE)
-        } else{     //post list
-            for(key in remoteMessage.data.keys){
-                intent.putExtra(key, remoteMessage.data.getValue(key))
-            }
-            pendingIntent = PendingIntent.getActivity(this, uniId, /* Request code */ intent, PendingIntent.FLAG_MUTABLE)
-        }
+        pendingIntent = PendingIntent.getActivity(this, uniId, /* Request code */ intent, PendingIntent.FLAG_MUTABLE)
 
         // 알림 채널 이름
         val channelId = "my_channel"

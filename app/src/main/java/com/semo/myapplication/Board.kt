@@ -16,10 +16,9 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.size
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.ads.AdRequest
-import com.google.firebase.messaging.FirebaseMessaging
+import com.google.android.gms.ads.MobileAds
 import com.google.gson.Gson
 import com.semo.myapplication.databinding.ActivityPostBinding
 import retrofit2.Call
@@ -57,6 +56,7 @@ class Board : AppCompatActivity() {
     var briefTitle: String? = null
     var content: String? = null
     var user_id:String? = null
+    var post_user_id:String? = null
     var modyfiyDate:String? = null
 
     var modyfiyData:ModifyData? = null
@@ -86,6 +86,7 @@ class Board : AppCompatActivity() {
         // 인스턴스를 활용하여 생성된 뷰를 액티비티에 표시 합니다.
         setContentView(binding.root)
 
+        MobileAds.initialize(this)
         val adRequest = AdRequest.Builder().build()
         binding.adView.loadAd(adRequest)
 
@@ -97,7 +98,7 @@ class Board : AppCompatActivity() {
                     .toMutableList() as ArrayList<Int>
         }
 
-        listAdapter = CommentListAdapter(itemList, sharedPreferences, comment_block_list) !!
+        listAdapter = CommentListAdapter(itemList, sharedPreferences, comment_block_list, binding) !!
         // 레이아웃 매니저와 어댑터 설정
         binding.commentlist.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.commentlist.adapter = listAdapter
@@ -113,12 +114,9 @@ class Board : AppCompatActivity() {
 
         //binding.title.setText(title)
         post_id = intent.getIntExtra("post_id",0)
-        author = intent.getStringExtra("author")
-        modyfiyDate = intent.getStringExtra("updated_date")
-        user_id = intent.getStringExtra("user_id").toString()
-        initDynamicLink()
+        user_id = intent.getStringExtra("user_id")
 
-        Log.d("dynamic postid", post_id.toString())
+        Log.d("postid", post_id.toString())
 
         boardService.contentview(post_id).enqueue(object: Callback<ContentViewData> {
             override fun onFailure(call: Call<ContentViewData>, t: Throwable) {
@@ -128,6 +126,9 @@ class Board : AppCompatActivity() {
                 title = contentData!!.content.title
                 binding.title.setText(contentData!!.content.title)
                 binding.content.setText(contentData!!.content.content)
+                binding.author.setText(contentData!!.content.author)
+                binding.date.setText(contentData!!.content.updated_date?.toDate()?.formatTo("MM/dd HH:mm"))
+                post_user_id = contentData!!.content.user_id
                 content = contentData!!.content.content
             }
         })
@@ -219,7 +220,7 @@ class Board : AppCompatActivity() {
             }
         }
         binding.confirm.setOnClickListener{
-            var content:String = binding.conmment.text.toString()
+            var content:String = binding.commentEdit.text.toString()
             val contentPattern = "^(\n*.+\n*){1,99}$"
             var blank = content.replace("\\s+".toRegex(),"")
             var pattern = Pattern.compile(contentPattern)
@@ -252,7 +253,7 @@ class Board : AppCompatActivity() {
                             //}
                         }
                     })
-                binding.conmment.setText("")
+                binding.commentEdit.setText("")
                 val imm: InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
                 binding.commentlist.smoothScrollToPosition(itemList.size)
@@ -267,7 +268,8 @@ class Board : AppCompatActivity() {
                     Gson().fromJson(blockcommentlists, Array<Int>::class.java)
                         .toMutableList() as ArrayList<Int>
             }
-            boardService.checkauthor(post_id!!, user_id,).enqueue(object : Callback<CheckAuthorData> {
+
+            boardService.checkauthor(post_id!!, user_id!!).enqueue(object : Callback<CheckAuthorData> {
                 override fun onResponse(
                     call: Call<CheckAuthorData>,
                     response: Response<CheckAuthorData>
@@ -300,8 +302,13 @@ class Board : AppCompatActivity() {
                     ) {
                         contentData = response.body()
                         if (contentData != null) {
+                            contentData = response.body()
+                            title = contentData!!.content.title
                             binding.title.setText(contentData!!.content.title)
                             binding.content.setText(contentData!!.content.content)
+                            binding.author.setText(contentData!!.content.author)
+                            binding.date.setText(contentData!!.content.updated_date?.toDate()?.formatTo("MM/dd HH:mm"))
+                            post_user_id = contentData!!.content.user_id
                             content = contentData!!.content.content
                         }
                     }
@@ -353,6 +360,29 @@ class Board : AppCompatActivity() {
                 Gson().fromJson(blockcommentlists, Array<Int>::class.java)
                     .toMutableList() as ArrayList<Int>
         }
+
+
+        boardService.contentview(post_id)
+            .enqueue(object : Callback<ContentViewData> {
+                override fun onFailure(call: Call<ContentViewData>, t: Throwable) {
+                }
+
+                override fun onResponse(
+                    call: Call<ContentViewData>,
+                    response: Response<ContentViewData>
+                ) {
+                    contentData = response.body()
+                    if (contentData != null) {
+                        title = contentData!!.content.title
+                        binding.title.setText(contentData!!.content.title)
+                        binding.content.setText(contentData!!.content.content)
+                        binding.author.setText(contentData!!.content.author)
+                        binding.date.setText(contentData!!.content.updated_date?.toDate()?.formatTo("MM/dd HH:mm"))
+                        post_user_id = contentData!!.content.user_id
+                        content = contentData!!.content.content
+                    }
+                }
+            })
         Log.d("checkauthor", post_id.toString() + user_id.toString())
         boardService.checkauthor(post_id!!, user_id,).enqueue(object : Callback<CheckAuthorData> {
             override fun onResponse(
@@ -374,23 +404,6 @@ class Board : AppCompatActivity() {
             override fun onFailure(call: Call<CheckAuthorData>, t: Throwable) {
             }
         })
-        boardService.contentview(post_id)
-            .enqueue(object : Callback<ContentViewData> {
-                override fun onFailure(call: Call<ContentViewData>, t: Throwable) {
-                }
-
-                override fun onResponse(
-                    call: Call<ContentViewData>,
-                    response: Response<ContentViewData>
-                ) {
-                    contentData = response.body()
-                    if (contentData != null) {
-                        binding.title.setText(contentData!!.content.title)
-                        binding.content.setText(contentData!!.content.content)
-                        content = contentData!!.content.content
-                    }
-                }
-            })
         boardService.commentview(post_id!!).enqueue(object : Callback<CommentViewData> {
             override fun onFailure(call: Call<CommentViewData>, t: Throwable) {
                 Log.d("commentaa", t.toString())
@@ -423,9 +436,7 @@ class Board : AppCompatActivity() {
                 binding.commentlist.adapter = listAdapter
             }
         })
-        binding.content.setText(content)
-        binding.title.setText(title)
-        binding.date.setText(modyfiyDate)
+
 
         binding.back.setOnClickListener {
             finish()
@@ -481,32 +492,8 @@ class Board : AppCompatActivity() {
         return formatter.format(this)
     }
 
-    /** DynamicLink */
-    private fun initDynamicLink() {
-        val dynamicLinkData = intent.extras
-        if (dynamicLinkData != null) {
-            var dataStr = "DynamicLink 수신받은 값 (board)\n"
-            for (key in dynamicLinkData.keySet()) {
-                dataStr += "key: $key / value: ${dynamicLinkData.getString(key)}\n"
-            }
-            Log.d("fcmtokendynamic",dataStr)
-            if(dynamicLinkData.getString("value") == "1"){
-                post_id = dynamicLinkData.getString("post_id")!!.toInt()
-                Log.d("dynamicLinDatapostid", dynamicLinkData.getString("post_id")!!)
-                author = dynamicLinkData.getString("author")
-                modyfiyDate = dynamicLinkData.getString("modyfiyDate")!!.toDates()?.formatTo("MM/dd HH:mm")
-                user_id = dynamicLinkData.getString("user_id")
-                ispush = 1
-            }
-        }
-    }
 
     override fun onStop() {
         super.onStop()
-        Log.d("sssssss",ispush.toString())
-        if(ispush == 1){
-            val signipIntent = Intent(this, Signin::class.java)
-            startActivity(signipIntent)
-        }
     }
 }

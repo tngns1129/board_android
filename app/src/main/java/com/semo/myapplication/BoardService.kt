@@ -5,61 +5,52 @@ import retrofit2.http.*
 
 interface BoardService {
 
-    @GET("/titleview/")
+    @GET("/post/")
     fun titleview(
-    ) : Call<BriefContentViewData>
+    ) : Call<List<BriefContentViewData>>
 
-    @FormUrlEncoded
-    @POST("/contentview/")
+    @GET("/post/detail")
     fun contentview(
-        @Field("post_id") postid:Int?,
+        @Query("post_id") postid:Int?,
     ) : Call<ContentViewData>
 
-    @FormUrlEncoded
-    @POST("/delete/")
+    @DELETE("/post/detail")
     fun delete(
-        @Field("post_id") postid:Int,
-        @Field("user_id") userid:String?,
+        @Query("post_id") postid:Int,
+        @Query("user_id") userid:String?,
     ) : Call<DeleteData>
 
-    @GET("/posts/")
-    fun getlist(
-    ) : Call<List<BoardData>>
-
-    @FormUrlEncoded
-    @POST("/modify/")
+    @PATCH("/post/detail")
     fun modify(
-        @Field("post_id") postid:Int,
-        @Field("user_id") userid: String?,
-        @Field("title") title: String?,
-        @Field("content") contents: String?,
+        @Query("post_id") postid:Int,
+        @Query("user_id") userid: String?,
+        @Query("title") title: String?,
+        @Query("content") contents: String?,
     ) : Call<ModifyData>
 
     @FormUrlEncoded
-    @POST("/checkauthorview/")
+    @POST("/post/checkauthor")
     fun checkauthor(
-        @Field("post_id") postid:Int,
+        @Field("post_id") postid: Int,
         @Field("user_id") userid: String?,
     ) : Call<CheckAuthorData>
 
-    @FormUrlEncoded
-    @POST("/commentview/")
+    @GET("/post/comments")
     fun commentview(
-        @Field("post_id") postid: Int,
+        @Query("post_id") postid: Int,
     ) : Call<CommentViewData>
 
     @FormUrlEncoded
-    @POST("/writecommentview/")
+    @POST("/post/comments")
     fun writecommentview(
-        @Field("post_id") postid:Int,
+        @Field("post_id") postid: Int,
         @Field("user_id") userid: String?,
         @Field("content") title: String?,
     ) : Call<CommentWriteData>
 
-    @FormUrlEncoded
-    @POST("/deletecommentview/")
+    @DELETE("/post/comments")
     fun deletecommentview(
-        @Field("id") id:Int?,
-        @Field("user_id") userid: String?,
+        @Query("id") id:Int?,
+        @Query("user_id") userid: String?,
     ) : Call<DeleteData>
 }

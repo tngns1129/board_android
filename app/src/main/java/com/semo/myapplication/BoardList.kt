@@ -4,13 +4,14 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.semo.myapplication.databinding.ActivityPostListBinding
@@ -20,9 +21,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.collections.ArrayList
 
 class BoardList : AppCompatActivity() {
 
@@ -44,10 +43,14 @@ class BoardList : AppCompatActivity() {
 
        // 어댑터
     lateinit var listAdapter:BoardListAdapter
-    var post:BriefContentViewData? = null
+    //var post:BriefContentViewData? = null
+    var post: List<BriefContentViewData>? = null
 
     var title:String? = null
     var author:String? = null
+    lateinit var user:UserData
+    lateinit var value:String
+    var post_id:Int = 0
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,12 +66,27 @@ class BoardList : AppCompatActivity() {
             .build()
         boardService = retrofit.create(BoardService::class.java)
 
+        MobileAds.initialize(this)
         val adRequest = AdRequest.Builder().build()
         binding.adView.loadAd(adRequest)
-        val user = intent.getSerializableExtra("user") as UserData
+
+        user = intent.getSerializableExtra("user") as UserData
+        value = intent.getStringExtra("value").toString()
+        post_id = intent.getIntExtra("post_id",0)
+        if (value == "1") {         //알림 통해 접근시
+            val boardIntent = Intent(this, Board::class.java)
+            boardIntent.putExtra("post_id",post_id)
+            boardIntent.putExtra("user_id",user.id)
+            startActivity(boardIntent)
+        }
+        // 레이아웃 매니저와 어댑터 설정
         listAdapter = user?.let { BoardListAdapter(itemList, it) }!!
+        binding.postlist.layoutManager = LinearLayoutManager(this@BoardList, LinearLayoutManager.VERTICAL, false)
+        binding.postlist.adapter = listAdapter
+
         shared_login = getSharedPreferences("loginInfo", MODE_PRIVATE)
         login_editor = shared_login.edit()
+
 
         shared_block = getSharedPreferences("postBlockList", MODE_PRIVATE)
         val blocklist = shared_block.getString("post_id","")
@@ -80,60 +98,58 @@ class BoardList : AppCompatActivity() {
             block_list.clear()
         }
 
-        boardService.titleview().enqueue(object: Callback<BriefContentViewData> {
-            override fun onFailure(call: Call<BriefContentViewData>, t: Throwable) {
-                Log.d("boardsss",t.toString())
+        boardService.titleview().enqueue(object: Callback<List<BriefContentViewData>> {
+            override fun onFailure(call: Call<List<BriefContentViewData>>, t: Throwable) {
             }
 
-            override fun onResponse(call: Call<BriefContentViewData>, response: Response<BriefContentViewData>) {
-                Log.d("boardsss","body : "+ response.body())
+            override fun onResponse(call: Call<List<BriefContentViewData>>, response: Response<List<BriefContentViewData>>) {
                 post = response.body()
                 itemList.clear()
+                Log.d("POSTLIST", "body : " + post)
                 var t:String
-                if(post?.code == "000") {
-                    for (i in post?.content!!) {
-                        if(i.title?.length!! >=25) {
-                            t = i.title!!.substring(0 until 25) + "..."
-                            itemList.add(
-                                BriefContentData(
-                                    t,
-                                    i.brief_description,
-                                    i.updated_date?.toDate()?.formatTo("MM/dd HH:mm"),
-                                    i.user,
-                                    i.id,
-                                    i.comment_count
-                                )
+                for (i in post!!) {
+                    if(i.title?.length!! >=25) {
+                        t = i.title!!.substring(0 until 25) + "..."
+                        itemList.add(
+                            BriefContentData(
+                                t,
+                                i.brief_description,
+                                i.updated_date?.toDate()?.formatTo("MM/dd HH:mm"),
+                                i.user,
+                                i.id,
+                                i.comment_count
                             )
-                        } else{
-                            itemList.add(
-                                BriefContentData(
-                                    i.title,
-                                    i.brief_description,
-                                    i.updated_date?.toDate()?.formatTo("MM/dd HH:mm"),
-                                    i.user,
-                                    i.id,
-                                    i.comment_count
-                                )
+                        )
+                    } else{
+                        itemList.add(
+                            BriefContentData(
+                                i.title,
+                                i.brief_description,
+                                i.updated_date?.toDate()?.formatTo("MM/dd HH:mm"),
+                                i.user,
+                                i.id,
+                                i.comment_count
                             )
-                        }
+                        )
                     }
-                    val delete = arrayListOf<BriefContentData>()
-                    for (i in itemList!!) {
-                        for (k in block_list.distinct()) {
-                            if (i.id == k) {
-                                delete.add(i)
-                            }
-                        }
-                    }
-                    itemList.removeAll(delete)
                 }
+                val delete = arrayListOf<BriefContentData>()
+                for (i in itemList!!) {
+                    for (k in block_list.distinct()) {
+                        if (i.id == k) {
+                            delete.add(i)
+                        }
+                    }
+                }
+                itemList.removeAll(delete)
+
+                listAdapter.notifyDataSetChanged()
                 Log.d("block",block_list.toString())
             }
         })
 
-        // 레이아웃 매니저와 어댑터 설정
-        binding.postlist.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        binding.postlist.adapter = listAdapter
+
+
 
         binding.writing.setOnClickListener {
             val writingIntent = Intent(this, Writing::class.java)
@@ -175,58 +191,57 @@ class BoardList : AppCompatActivity() {
             }else{
                 block_list.clear()
             }
-            boardService.titleview().enqueue(object: Callback<BriefContentViewData> {
-                override fun onFailure(call: Call<BriefContentViewData>, t: Throwable) {
-                    Log.d("boardsss",t.toString())
+            boardService.titleview().enqueue(object: Callback<List<BriefContentViewData>> {
+                override fun onFailure(call: Call<List<BriefContentViewData>>, t: Throwable) {
+                    Log.d("POSTLIST", "fail : " + t.toString())
                 }
 
-                override fun onResponse(call: Call<BriefContentViewData>, response: Response<BriefContentViewData>) {
-                    Log.d("boardsss","body : "+ response.body())
+                override fun onResponse(call: Call<List<BriefContentViewData>>, response: Response<List<BriefContentViewData>>) {
                     post = response.body()
                     itemList.clear()
+                    Log.d("POSTLIST", "body : " + post)
                     var t:String
-                    if(post?.code == "000") {
-                        for (i in post?.content!!) {
-                            if(i.title?.length!! >=25) {
-                                t = i.title!!.substring(0 until 25) + "..."
-                                itemList.add(
-                                    BriefContentData(
-                                        t,
-                                        i.brief_description,
-                                        i.updated_date?.toDate()?.formatTo("MM/dd HH:mm"),
-                                        i.user,
-                                        i.id,
-                                        i.comment_count
-                                    )
+                    for (i in post!!) {
+                        if(i.title?.length!! >=25) {
+                            t = i.title!!.substring(0 until 25) + "..."
+                            itemList.add(
+                                BriefContentData(
+                                    t,
+                                    i.brief_description,
+                                    i.updated_date?.toDate()?.formatTo("MM/dd HH:mm"),
+                                    i.user,
+                                    i.id,
+                                    i.comment_count
                                 )
-                            } else{
-                                itemList.add(
-                                    BriefContentData(
-                                        i.title,
-                                        i.brief_description,
-                                        i.updated_date?.toDate()?.formatTo("MM/dd HH:mm"),
-                                        i.user,
-                                        i.id,
-                                        i.comment_count
-                                    )
+                            )
+                        } else{
+                            itemList.add(
+                                BriefContentData(
+                                    i.title,
+                                    i.brief_description,
+                                    i.updated_date?.toDate()?.formatTo("MM/dd HH:mm"),
+                                    i.user,
+                                    i.id,
+                                    i.comment_count
                                 )
-                            }
+                            )
                         }
-                        val delete = arrayListOf<BriefContentData>()
-                        for (i in itemList!!) {
-                            for (k in block_list.distinct()) {
-                                if (i.id == k) {
-                                    delete.add(i)
-                                }
-                            }
-                        }
-                        itemList.removeAll(delete)
                     }
+                    val delete = arrayListOf<BriefContentData>()
+                    for (i in itemList!!) {
+                        for (k in block_list.distinct()) {
+                            if (i.id == k) {
+                                delete.add(i)
+                            }
+                        }
+                    }
+                    itemList.removeAll(delete)
+
+                    listAdapter.notifyDataSetChanged()
                     Log.d("block",block_list.toString())
-                    binding.postlist.layoutManager = LinearLayoutManager(this@BoardList, LinearLayoutManager.VERTICAL, false)
-                    binding.postlist.adapter = listAdapter
                 }
             })
+            listAdapter.notifyDataSetChanged()
             binding.refresh.isRefreshing = false
         }
 

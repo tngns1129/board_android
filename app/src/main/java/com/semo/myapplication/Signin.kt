@@ -22,18 +22,28 @@ class Signin : AppCompatActivity() {
     private lateinit var editor : SharedPreferences.Editor
 
     private lateinit var retrofit:Retrofit
-    private lateinit var signinService:SigninService
+    private lateinit var signinService:SignService
 
     // 전역 변수로 바인딩 객체 선언
     private var mBinding: ActivitySigninBinding? = null
     // 매번 null 체크를 할 필요 없이 편의성을 위해 바인딩 변수 재 선언
     private val binding get() = mBinding!!
     var signin:SigninData? = null
+    var value:String = "0"
+    var post_id:Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding = ActivitySigninBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        /** FCM설정, Token값 가져오기 */
+        MyFirebaseMessagingService().getFirebaseToken()
+
+        /** DynamicLink 수신확인 */
+        initDynamicLink()
+
+        Log.d("sign in postid", post_id.toString())
 
         sharedPreferences = getSharedPreferences("loginInfo", MODE_PRIVATE)
         sharedPreferencesToken = getSharedPreferences("token", MODE_PRIVATE)
@@ -46,7 +56,7 @@ class Signin : AppCompatActivity() {
             .baseUrl(resources.getString(R.string.server_adress))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-        signinService = retrofit.create(SigninService::class.java)
+        signinService = retrofit.create(SignService::class.java)
 
         val mainIntent = Intent(this, BoardList::class.java)
 
@@ -84,6 +94,8 @@ class Signin : AppCompatActivity() {
                                     toast(resources.getString(R.string.autologin))
                                     val user = UserData(signin!!.user.id, id)
                                     mainIntent.putExtra("user", user)
+                                    mainIntent.putExtra("value", value)
+                                    mainIntent.putExtra("post_id", post_id)
                                     startActivity(mainIntent)
                                     finish()
                                 }
@@ -159,6 +171,8 @@ class Signin : AppCompatActivity() {
                                     editor.commit()
                                     val user = UserData(signin!!.user.id, id)
                                     mainIntent.putExtra("user", user)
+                                    mainIntent.putExtra("value", value)
+                                    mainIntent.putExtra("post_id", post_id)
                                     startActivity(mainIntent)
                                     finish()
                                 }
@@ -190,11 +204,8 @@ class Signin : AppCompatActivity() {
     }
 
     override fun onResume() {
-        /** FCM설정, Token값 가져오기 */
-        MyFirebaseMessagingService().getFirebaseToken()
 
-        /** DynamicLink 수신확인 */
-        initDynamicLink()
+
         super.onResume()
     }
 
@@ -209,10 +220,9 @@ class Signin : AppCompatActivity() {
             for (key in dynamicLinkData.keySet()) {
                 dataStr += "key: $key / value: ${dynamicLinkData.getString(key)}\n"
             }
+            value = dynamicLinkData.getString("value").toString()
+            post_id = dynamicLinkData.getString("post_id")?.toInt() ?:
             Log.d("fcmtokendynamic",dataStr)
-            if(dynamicLinkData.getString("post_id") != null){
-
-            }
         }
     }
 }

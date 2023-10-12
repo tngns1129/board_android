@@ -1,9 +1,7 @@
 package com.semo.myapplication
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Build
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +14,6 @@ import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.collections.ArrayList
 
 class BoardListAdapter(
     val contents: ArrayList<BriefContentData>,
@@ -53,17 +50,12 @@ class BoardListAdapter(
             holder.date.text = contents[position].updated_date?.toDate()?.formatTo("MM/dd")
         }
 
-
-
         holder.itemView.setOnClickListener(){
             val intent = Intent(holder.itemView?.context, Board::class.java)
-            intent.putExtra("updated_date", contents[position].updated_date)
-            intent.putExtra("author", contents[position].user?.username)
             intent.putExtra("post_id", contents[position].id)
             intent.putExtra("user_id",user.id)
             ContextCompat.startActivities(holder.itemView.context, arrayOf(intent), null)
         }
-
     }
 
     fun String.toDate(dateFormat: String = "MM/dd HH:mm", timeZone: TimeZone = TimeZone.getDefault()): Date {
