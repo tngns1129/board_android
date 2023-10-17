@@ -8,15 +8,16 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface SignService {
-    @GET("/sign")   //signin
+    @FormUrlEncoded
+    @POST("/signin")   //signin
     fun requestSignin(
-        @Query("username") userid:String,
-        @Query("password") userpw:String,
-        @Query("token") token:String,
+        @Field("username") userid:String,
+        @Field("password") userpw:String,
+        @Field("token") token:String,
     ) : Call<SigninData>
 
     @FormUrlEncoded
-    @POST("/sign")   //signup
+    @POST("/signup")   //signup
     fun requestSignup(
         @Field("username") userid:String,
         @Field("password") userpw:String

@@ -57,7 +57,6 @@ class Signup : AppCompatActivity() {
             id = binding.userid.text.toString()
             pw = binding.userpassward.text.toString()
 
-
             finish()
         }
 

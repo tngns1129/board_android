@@ -98,7 +98,7 @@ class BoardList : AppCompatActivity() {
             block_list.clear()
         }
 
-        val page = 1;
+        val page = 0;
         boardService.titleview(page).enqueue(object: Callback<List<BriefContentViewData>> {
             override fun onFailure(call: Call<List<BriefContentViewData>>, t: Throwable) {
             }
