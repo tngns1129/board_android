@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace 'com.semo.myapplication'
-    compileSdk 32
+    compileSdk 33
     buildFeatures {
         // 뷰 바인딩 활성화
         viewBinding true
@@ -14,9 +14,9 @@ android {
     defaultConfig {
         applicationId "com.semo.myapplication"
         minSdk 24
-        targetSdk 32
-        versionCode 57
-        versionName "1.9.1"
+        targetSdk 33
+        versionCode 60
+        versionName "1.9.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 

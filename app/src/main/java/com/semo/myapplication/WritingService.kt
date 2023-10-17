@@ -7,7 +7,7 @@ import retrofit2.http.POST
 
 interface WritingService {
     @FormUrlEncoded
-    @POST("/post/detail")
+    @POST("/post/")
     fun requestPost(
         @Field("title") title: String?,
         @Field("content") contents: String?,

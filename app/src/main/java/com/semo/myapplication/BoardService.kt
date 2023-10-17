@@ -7,22 +7,23 @@ interface BoardService {
 
     @GET("/post/")
     fun titleview(
+        @Query("page") page: Int,
     ) : Call<List<BriefContentViewData>>
 
-    @GET("/post/detail")
+    @GET("/post/detail/{post_id}")
     fun contentview(
-        @Query("post_id") postid:Int?,
+        @Path("post_id") postid:Int?,
     ) : Call<ContentViewData>
 
-    @DELETE("/post/detail")
+    @DELETE("/post/detail/{post_id}")
     fun delete(
-        @Query("post_id") postid:Int,
+        @Path("post_id") postid:Int,
         @Query("user_id") userid:String?,
     ) : Call<DeleteData>
 
-    @PATCH("/post/detail")
+    @PATCH("/post/detail/{post_id}")
     fun modify(
-        @Query("post_id") postid:Int,
+        @Path("post_id") postid:Int,
         @Query("user_id") userid: String?,
         @Query("title") title: String?,
         @Query("content") contents: String?,

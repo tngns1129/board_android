@@ -98,7 +98,8 @@ class BoardList : AppCompatActivity() {
             block_list.clear()
         }
 
-        boardService.titleview().enqueue(object: Callback<List<BriefContentViewData>> {
+        val page = 1;
+        boardService.titleview(page).enqueue(object: Callback<List<BriefContentViewData>> {
             override fun onFailure(call: Call<List<BriefContentViewData>>, t: Throwable) {
             }
 
@@ -191,7 +192,7 @@ class BoardList : AppCompatActivity() {
             }else{
                 block_list.clear()
             }
-            boardService.titleview().enqueue(object: Callback<List<BriefContentViewData>> {
+            boardService.titleview(page).enqueue(object: Callback<List<BriefContentViewData>> {
                 override fun onFailure(call: Call<List<BriefContentViewData>>, t: Throwable) {
                     Log.d("POSTLIST", "fail : " + t.toString())
                 }
